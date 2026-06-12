@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { useWallet, WalletModal, WalletButton } from './WalletConnect';
 
 const navLinks = [
   { label: 'Intelligence', href: '#intelligence' },
@@ -15,6 +16,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -22,12 +24,16 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleConnect = async (walletName: string) => {
+    await connect(walletName);
+  };
+
   return (
     <>
       <motion.nav
         initial={{ y: -80 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${
           scrolled
             ? 'bg-[#070708]/80 backdrop-blur-xl border-b border-white/5'
@@ -35,7 +41,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-[1280px] mx-auto px-5 lg:px-20 h-full flex items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center font-display font-bold text-sm text-white group-hover:shadow-[0_0_20px_rgba(108,92,231,0.3)] transition-shadow">
               L
@@ -43,7 +48,6 @@ export default function Navbar() {
             <span className="font-display font-bold text-xl text-white">LORE</span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -56,18 +60,20 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right Side */}
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="live-dot" />
               <span className="font-data text-xs text-[#5A5A72]">LIVE</span>
             </div>
-            <button className="btn-primary text-sm !px-5 !py-2.5 !rounded-lg">
-              Connect Wallet
-            </button>
+            <WalletButton
+              wallet={wallet}
+              onOpenModal={() => setShowModal(true)}
+              onDisconnect={disconnect}
+              onCopyAddress={copyAddress}
+              copied={copied}
+            />
           </div>
 
-          {/* Mobile Toggle */}
           <button
             className="md:hidden text-white p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -97,11 +103,26 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <button className="btn-primary mt-4">Connect Wallet</button>
+              <WalletButton
+                wallet={wallet}
+                onOpenModal={() => { setShowModal(true); setMobileOpen(false); }}
+                onDisconnect={disconnect}
+                onCopyAddress={copyAddress}
+                copied={copied}
+                variant="mobile"
+              />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Wallet Modal */}
+      <WalletModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onConnect={handleConnect}
+        connecting={connecting}
+      />
     </>
   );
 }

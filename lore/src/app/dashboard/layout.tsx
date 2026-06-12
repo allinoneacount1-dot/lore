@@ -2,149 +2,182 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LayoutDashboard, Eye, FileText, Shield, Settings,
-  Bell, Search, Menu, X, ChevronDown, Wallet,
-  TrendingUp, TrendingDown, Activity, Zap,
-  ExternalLink, Copy, Check
+  BarChart3, Bell, Globe, LayoutDashboard, Menu, Radio,
+  Search, Settings, Shield, TrendingUp, Wallet, X
 } from 'lucide-react';
+import { useWallet, WalletModal, WalletButton } from '@/components/WalletConnect';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard', active: true },
-  { icon: Eye, label: 'Whale Radar', href: '/dashboard/whales' },
-  { icon: FileText, label: 'Narrative', href: '/dashboard/narrative' },
-  { icon: Shield, label: 'Exploits', href: '/dashboard/exploits' },
-  { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
+const sidebarLinks = [
+  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
+  { icon: Radio, label: 'Whale Radar', href: '/dashboard/whales' },
+  { icon: Shield, label: 'Exploit Detection', href: '/dashboard/exploits' },
+  { icon: Globe, label: 'Narratives', href: '/dashboard/narratives' },
+  { icon: TrendingUp, label: 'Sentiment', href: '/dashboard/sentiment' },
+  { icon: BarChart3, label: 'Portfolio', href: '/dashboard/portfolio' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
-
-  const handleConnect = () => {
-    setWalletConnected(true);
-    setWalletAddress('0x7a3...f29');
-  };
+  const { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress } = useWallet();
 
   return (
-    <div className="flex h-screen bg-[#070708] text-[#F5F5FA] overflow-hidden">
-      {/* Sidebar Overlay (mobile) */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-[260px] bg-[#0D0D12] border-r border-white/5 flex flex-col transition-transform duration-300 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
-        {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-white/5">
+    <div className="min-h-screen bg-[#070708] flex">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0D0D12] border-r border-white/5">
+        <div className="p-6">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center font-display font-bold text-sm text-white">
               L
             </div>
-            <span className="font-display font-bold text-lg text-white">LORE</span>
+            <span className="font-display font-bold text-xl text-white">LORE</span>
           </Link>
-          <button className="lg:hidden text-[#5A5A72]" onClick={() => setSidebarOpen(false)}>
-            <X size={20} />
-          </button>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 py-6 px-3 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
+        <nav className="flex-1 px-3 space-y-1">
+          {sidebarLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
             return (
               <Link
-                key={item.label}
-                href={item.href}
+                key={link.label}
+                href={link.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  item.active
+                  isActive
                     ? 'bg-[#6C5CE7]/10 text-[#6C5CE7] border border-[#6C5CE7]/20'
-                    : 'text-[#A0A0B8] hover:text-white hover:bg-white/5'
+                    : 'text-[#A0A0B8] hover:bg-white/5 hover:text-white border border-transparent'
                 }`}
               >
                 <Icon size={18} />
-                {item.label}
-                {item.label === 'Exploits' && (
-                  <span className="ml-auto w-2 h-2 rounded-full bg-[#FF5252] animate-pulse" />
-                )}
+                {link.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Wallet Section */}
         <div className="p-4 border-t border-white/5">
-          {walletConnected ? (
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00E676] to-[#00D2FF] flex items-center justify-center">
-                <Wallet size={14} className="text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-white font-data">{walletAddress}</div>
-                <div className="text-[10px] text-[#00E676] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E676]" />
-                  Connected
-                </div>
-              </div>
-              <Copy size={14} className="text-[#5A5A72] cursor-pointer hover:text-white" />
-            </div>
-          ) : (
-            <button
-              onClick={handleConnect}
-              className="w-full btn-primary text-sm !py-2.5 flex items-center justify-center gap-2"
-            >
-              <Wallet size={16} />
-              Connect Wallet
-            </button>
-          )}
+          <WalletButton
+            wallet={wallet}
+            onOpenModal={() => setShowModal(true)}
+            onDisconnect={disconnect}
+            onCopyAddress={copyAddress}
+            copied={copied}
+            variant="dashboard"
+          />
         </div>
       </aside>
 
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="lg:hidden fixed inset-0 z-50"
+          >
+            <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+            <motion.aside
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+              className="absolute left-0 top-0 bottom-0 w-72 bg-[#0D0D12] border-r border-white/5"
+            >
+              <div className="flex items-center justify-between p-5">
+                <Link href="/" className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center font-display font-bold text-sm text-white">L</div>
+                  <span className="font-display font-bold text-lg text-white">LORE</span>
+                </Link>
+                <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#5A5A72] hover:text-white p-1">
+                  <X size={20} />
+                </button>
+              </div>
+              <nav className="px-3 space-y-1">
+                {sidebarLinks.map((link) => {
+                  const Icon = link.icon;
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                        isActive
+                          ? 'bg-[#6C5CE7]/10 text-[#6C5CE7] border border-[#6C5CE7]/20'
+                          : 'text-[#A0A0B8] hover:bg-white/5 hover:text-white border border-transparent'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/5">
+                <WalletButton
+                  wallet={wallet}
+                  onOpenModal={() => { setShowModal(true); setSidebarOpen(false); }}
+                  onDisconnect={disconnect}
+                  onCopyAddress={copyAddress}
+                  copied={copied}
+                  variant="mobile"
+                />
+              </div>
+            </motion.aside>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="h-16 bg-[#0D0D12]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-5 lg:px-8 shrink-0">
+        <header className="h-16 border-b border-white/5 flex items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-4">
-            <button className="lg:hidden text-[#A0A0B8]" onClick={() => setSidebarOpen(true)}>
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-[#A0A0B8] hover:text-white p-2 rounded-lg hover:bg-white/5">
               <Menu size={20} />
             </button>
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 w-80">
-              <Search size={16} className="text-[#5A5A72]" />
+            <div className="relative hidden sm:block">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5A5A72]" />
               <input
                 type="text"
-                placeholder="Search wallets, protocols, narratives..."
-                className="bg-transparent text-sm text-white placeholder-[#5A5A72] outline-none w-full"
+                placeholder="Search wallets, tokens, narratives..."
+                className="w-64 lg:w-80 pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-[#5A5A72] focus:outline-none focus:border-[#6C5CE7]/50 focus:ring-1 focus:ring-[#6C5CE7]/20 transition-all"
               />
-              <kbd className="text-[10px] text-[#5A5A72] font-data border border-white/10 rounded px-1.5 py-0.5">⌘K</kbd>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00E676]/10 border border-[#00E676]/20">
-              <span className="live-dot" />
-              <span className="text-xs text-[#00E676] font-data">LIVE</span>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00E676]/5 border border-[#00E676]/20">
+              <div className="live-dot" />
+              <span className="font-data text-xs text-[#00E676]">LIVE</span>
             </div>
-            <button className="relative p-2 rounded-xl hover:bg-white/5 transition-colors">
-              <Bell size={18} className="text-[#A0A0B8]" />
+            <button className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
+              <Bell size={18} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#FF5252]" />
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center text-xs font-bold text-white">
-              L
-            </div>
+            <button className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
+              <Settings size={18} />
+            </button>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-5 lg:p-8">
+        <main className="flex-1 p-4 lg:p-8 overflow-auto">
           {children}
         </main>
       </div>
+
+      {/* Wallet Modal */}
+      <WalletModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onConnect={connect}
+        connecting={connecting}
+      />
     </div>
   );
 }
