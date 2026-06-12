@@ -1,26 +1,35 @@
 // src/app/page.tsx
+import type { Metadata } from 'next';
+
+export const dynamic = 'force-static';
+
+export const metadata: Metadata = {
+  title: 'LORE — The Intelligence Layer for Crypto Markets',
+  description: 'See what others can\'t. Trade what others won\'t. AI-powered crypto intelligence.',
+};
+
 export default function Home() {
   return (
-    <main className="relative min-h-screen text-[#F5F5FA] overflow-x-hidden">
+    <main className="relative min-h-screen text-[#F5F5FA] overflow-x-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#070708]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-[1280px] mx-auto px-5 lg:px-20 h-full flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5">
-            <span className="font-display font-bold text-xl text-white">LORE</span>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 64, background: 'rgba(7,7,8,0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', paddingLeft: 20, paddingRight: 20, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: 20, color: '#fff' }}>LORE</span>
           </a>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#intelligence" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Intelligence</a>
-            <a href="#narrative" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Narrative</a>
-            <a href="#terminal" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Terminal</a>
-            <a href="/pricing" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Pricing</a>
+            <a href="#intelligence" style={{ fontSize: 14, fontWeight: 500, color: '#9CA3AF', textDecoration: 'none' }}>Intelligence</a>
+            <a href="#narrative" style={{ fontSize: 14, fontWeight: 500, color: '#9CA3AF', textDecoration: 'none' }}>Narrative</a>
+            <a href="#terminal" style={{ fontSize: 14, fontWeight: 500, color: '#9CA3AF', textDecoration: 'none' }}>Terminal</a>
+            <a href="/pricing" style={{ fontSize: 14, fontWeight: 500, color: '#9CA3AF', textDecoration: 'none' }}>Pricing</a>
           </div>
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="font-mono text-xs text-gray-500">LIVE</span>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ADE80' }} />
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#6B7280' }}>LIVE</span>
             </div>
-            <a href="/auth/login" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">Sign In</a>
-            <a href="/auth/login" className="px-5 py-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-400 text-sm font-medium hover:bg-violet-500/20 transition-colors">
+            <a href="/auth/login" style={{ fontSize: 14, color: '#9CA3AF', textDecoration: 'none', fontWeight: 500 }}>Sign In</a>
+            <a href="/auth/login" style={{ padding: '10px 20px', borderRadius: 8, background: 'rgba(108,92,231,0.1)', border: '1px solid rgba(108,92,231,0.2)', color: '#A78BFA', fontSize: 14, fontWeight: 500, textDecoration: 'none' }}>
               Connect Wallet
             </a>
           </div>
