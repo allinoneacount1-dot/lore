@@ -2,7 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, ExternalLink, Check, Wallet, ChevronDown, Loader2 } from 'lucide-react';
 import { useUnifiedWallet } from '@/hooks/useWallet';
@@ -21,18 +20,46 @@ function getChainExplorer(address: string, chain: string) {
 export function WalletConnectModal() {
   const [show, setShow] = useState(false);
   const { connectSolana, connectEvm, connecting } = useUnifiedWallet();
-  const { setVisible } = useWalletModal();
 
   const handleSolanaConnect = async () => {
     setShow(false);
-    // Use Solana wallet modal
-    setVisible(true);
+    await connectSolana();
   };
 
   const handleEvmConnect = async () => {
     setShow(false);
     await connectEvm();
   };
+
+  const walletOptions = [
+    {
+      id: 'phantom',
+      name: 'Phantom',
+      chain: 'Solana',
+      icon: '👻',
+      color: 'from-purple-500/20 to-indigo-500/20',
+      border: 'hover:border-purple-500/30',
+      onClick: handleSolanaConnect,
+    },
+    {
+      id: 'solflare',
+      name: 'Solflare',
+      chain: 'Solana',
+      icon: '🔥',
+      color: 'from-orange-500/20 to-amber-500/20',
+      border: 'hover:border-orange-500/30',
+      onClick: handleSolanaConnect,
+    },
+    {
+      id: 'metamask',
+      name: 'MetaMask',
+      chain: 'Ethereum & EVMs',
+      icon: '🦊',
+      color: 'from-amber-500/20 to-yellow-500/20',
+      border: 'hover:border-amber-500/30',
+      onClick: handleEvmConnect,
+    },
+  ];
 
   return (
     <>
@@ -73,65 +100,27 @@ export function WalletConnectModal() {
               </div>
 
               <div className="space-y-3">
-                {/* Phantom / Solana */}
-                <button
-                  onClick={handleSolanaConnect}
-                  disabled={connecting}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-purple-500/30 transition-all disabled:opacity-50 group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-lg">
-                    👻
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className="font-medium text-white">Phantom</div>
-                    <div className="text-xs text-[var(--color-text-muted)]">Solana</div>
-                  </div>
-                  {connecting ? (
-                    <Loader2 size={18} className="animate-spin text-purple-400" />
-                  ) : (
-                    <span className="text-xs text-purple-400 group-hover:text-purple-300">→</span>
-                  )}
-                </button>
-
-                {/* Solflare */}
-                <button
-                  onClick={handleSolanaConnect}
-                  disabled={connecting}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-orange-500/30 transition-all disabled:opacity-50 group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-lg">
-                    🔥
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className="font-medium text-white">Solflare</div>
-                    <div className="text-xs text-[var(--color-text-muted)]">Solana</div>
-                  </div>
-                  {connecting ? (
-                    <Loader2 size={18} className="animate-spin text-orange-400" />
-                  ) : (
-                    <span className="text-xs text-orange-400 group-hover:text-orange-300">→</span>
-                  )}
-                </button>
-
-                {/* MetaMask / EVM */}
-                <button
-                  onClick={handleEvmConnect}
-                  disabled={connecting}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-amber-500/30 transition-all disabled:opacity-50 group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-lg">
-                    🦊
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className="font-medium text-white">MetaMask</div>
-                    <div className="text-xs text-[var(--color-text-muted)]">Ethereum & EVMs</div>
-                  </div>
-                  {connecting ? (
-                    <Loader2 size={18} className="animate-spin text-amber-400" />
-                  ) : (
-                    <span className="text-xs text-amber-400 group-hover:text-amber-300">→</span>
-                  )}
-                </button>
+                {walletOptions.map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={w.onClick}
+                    disabled={connecting}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] transition-all disabled:opacity-50 group ${w.border}`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${w.color} flex items-center justify-center text-lg`}>
+                      {w.icon}
+                    </div>
+                    <div className="text-left flex-1">
+                      <div className="font-medium text-white">{w.name}</div>
+                      <div className="text-xs text-[var(--color-text-muted)]">{w.chain}</div>
+                    </div>
+                    {connecting ? (
+                      <Loader2 size={18} className="animate-spin text-[var(--color-primary)]" />
+                    ) : (
+                      <span className="text-xs text-[var(--color-text-muted)] group-hover:text-white">→</span>
+                    )}
+                  </button>
+                ))}
               </div>
 
               <p className="mt-6 text-center text-xs text-[var(--color-text-muted)]">

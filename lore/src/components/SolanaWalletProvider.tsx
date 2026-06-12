@@ -12,9 +12,6 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 
-// Default styles for wallet adapter UI
-import '@solana/wallet-adapter-react-ui/styles.css';
-
 interface Props {
   children: ReactNode;
 }
