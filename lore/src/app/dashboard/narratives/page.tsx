@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Clock, Eye, Filter, Globe, Heart, MessageCircle,
@@ -8,6 +8,14 @@ import {
   ChevronDown, ExternalLink, Bookmark, ThumbsUp, AlertTriangle
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import {
+  DashboardPage,
+  StatCard,
+  SectionHeader,
+  EmptyState,
+  Skeleton,
+  SkeletonCard,
+} from '@/app/dashboard/layout';
 
 const categories = ['All', 'DeFi', 'NFT', 'Layer 1', 'Layer 2', 'AI', 'Gaming', 'Regulation'];
 
@@ -104,12 +112,26 @@ const narratives = [
   },
 ];
 
+const statsData = [
+  { label: 'Active Narratives', value: '24', icon: Brain },
+  { label: 'Avg. Confidence', value: '79%', icon: Star },
+  { label: 'Data Sources', value: '14', icon: Globe },
+  { label: 'Wallets Tracked', value: '12.8K', icon: Eye },
+];
+
 export default function NarrativesPage() {
   const { showToast } = useToast();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [narrativeList, setNarrativeList] = useState(narratives);
+  const [loading, setLoading] = useState(true);
+
+  // Simulate initial data load
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filtered = narrativeList.filter((n) => {
     const matchCategory = activeCategory === 'All' || n.category === activeCategory;
@@ -147,17 +169,13 @@ export default function NarrativesPage() {
   };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-h2 font-display text-white">Narratives</h1>
-        <p className="mt-2 text-[var(--color-text-secondary)]">
-          AI-generated market narratives from 14+ data sources. Updated in real-time.
-        </p>
-      </div>
-
+    <DashboardPage
+      title="AI Narratives"
+      subtitle="AI-generated market narratives from 14+ data sources. Updated in real-time."
+      loading={loading}
+    >
       {/* Search & Filter */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
           <input
@@ -188,169 +206,175 @@ export default function NarrativesPage() {
         </div>
       </div>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Active Narratives', value: '24', icon: Brain },
-          { label: 'Avg. Confidence', value: '79%', icon: Star },
-          { label: 'Data Sources', value: '14', icon: Globe },
-          { label: 'Wallets Tracked', value: '12.8K', icon: Eye },
-        ].map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="card-glass rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Icon size={14} className="text-[var(--color-primary)]" />
-                <span className="text-xs text-[var(--color-text-muted)] font-data">{stat.label}</span>
-              </div>
-              <div className="text-2xl font-display font-bold text-white">{stat.value}</div>
-            </div>
-          );
-        })}
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {statsData.map((stat) => (
+          <StatCard
+            key={stat.label}
+            label={stat.label}
+            value={stat.value}
+            icon={stat.icon}
+            color="text-[var(--color-primary)]"
+            loading={loading}
+          />
+        ))}
       </div>
 
       {/* Narrative Cards */}
-      <div className="space-y-4">
-        <AnimatePresence>
-          {filtered.map((narrative, i) => (
-            <motion.div
-              key={narrative.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ delay: i * 0.05 }}
-              className="card-glass rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/20 transition-all"
-            >
-              <div className="p-6">
-                {/* Top Row */}
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${getSentimentColor(narrative.sentiment)}`}>
-                        {getSentimentIcon(narrative.sentiment)}
-                        {narrative.sentiment.charAt(0).toUpperCase() + narrative.sentiment.slice(1)}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[var(--color-text-secondary)] border border-white/10">
-                        {narrative.category}
-                      </span>
-                      <span className="font-data text-xs text-[var(--color-text-muted)] flex items-center gap-1">
-                        <Clock size={12} />
-                        {narrative.timestamp}
-                      </span>
-                    </div>
-                    <h3 className="font-display font-semibold text-lg text-white mb-2">
-                      {narrative.title}
-                    </h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                      {narrative.summary}
-                    </p>
-                  </div>
-                </div>
+      <div>
+        <SectionHeader
+          title="Narratives"
+          subtitle={`${filtered.length} narrative${filtered.length !== 1 ? 's' : ''} found`}
+        />
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {narrative.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[var(--color-text-muted)]">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Bottom Row */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[var(--color-positive)]' : narrative.confidence >= 60 ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-negative)]'}`}
-                          style={{ width: `${narrative.confidence}%` }}
-                        />
-                      </div>
-                      <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.confidence}% confidence</span>
-                    </div>
-                    <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.sources} sources</span>
-                    <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.wallets} wallets</span>
-                    <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {narrative.timeframe}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleLike(narrative.id)}
-                      className={`p-2 rounded-lg transition-colors ${narrative.liked ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
-                    >
-                      <Heart size={16} fill={narrative.liked ? 'currentColor' : 'none'} />
-                    </button>
-                    <button
-                      onClick={() => toggleBookmark(narrative.id)}
-                      className={`p-2 rounded-lg transition-colors ${narrative.bookmarked ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
-                    >
-                      <Bookmark size={16} fill={narrative.bookmarked ? 'currentColor' : 'none'} />
-                    </button>
-                    <button
-                      onClick={() => showToast('Shared to clipboard!', 'success')}
-                      className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
-                    >
-                      <Share2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => setExpandedId(expandedId === narrative.id ? null : narrative.id)}
-                      className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
-                    >
-                      <ChevronDown size={16} className={`transition-transform ${expandedId === narrative.id ? 'rotate-180' : ''}`} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Expanded Details */}
-              <AnimatePresence>
-                {expandedId === narrative.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-t border-white/5 overflow-hidden"
-                  >
-                    <div className="p-6 bg-white/[0.02]">
-                      <h4 className="font-display font-semibold text-sm text-white mb-3">Key Insights</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                          <div className="text-xs text-[var(--color-text-muted)] mb-1">Pattern Match</div>
-                          <div className="text-sm text-white">Matches 3 previous institutional accumulation cycles with 94% similarity</div>
+        {loading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon={Brain}
+            title="No narratives found"
+            description="Try adjusting your search or filter criteria."
+          />
+        ) : (
+          <div className="space-y-4">
+            <AnimatePresence>
+              {filtered.map((narrative, i) => (
+                <motion.div
+                  key={narrative.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="card-glass rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/20 transition-all"
+                >
+                  <div className="p-6">
+                    {/* Top Row */}
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${getSentimentColor(narrative.sentiment)}`}>
+                            {getSentimentIcon(narrative.sentiment)}
+                            {narrative.sentiment.charAt(0).toUpperCase() + narrative.sentiment.slice(1)}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[var(--color-text-secondary)] border border-white/10">
+                            {narrative.category}
+                          </span>
+                          <span className="font-data text-xs text-[var(--color-text-muted)] flex items-center gap-1">
+                            <Clock size={12} />
+                            {narrative.timestamp}
+                          </span>
                         </div>
-                        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                          <div className="text-xs text-[var(--color-text-muted)] mb-1">Risk Assessment</div>
-                          <div className="text-sm text-white">Low risk of false positive. Multiple independent sources confirm the pattern.</div>
-                        </div>
+                        <h3 className="font-display font-semibold text-lg text-white mb-2">
+                          {narrative.title}
+                        </h3>
+                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                          {narrative.summary}
+                        </p>
                       </div>
-                      <div className="flex gap-3">
-                        <button onClick={() => showToast('Opening full analysis...', 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
-                          View Full Analysis
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {narrative.tags.map((tag) => (
+                        <span key={tag} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[var(--color-text-muted)]">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Bottom Row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[var(--color-positive)]' : narrative.confidence >= 60 ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-negative)]'}`}
+                              style={{ width: `${narrative.confidence}%` }}
+                            />
+                          </div>
+                          <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.confidence}% confidence</span>
+                        </div>
+                        <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.sources} sources</span>
+                        <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.wallets} wallets</span>
+                        <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {narrative.timeframe}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleLike(narrative.id)}
+                          className={`p-2 rounded-lg transition-colors ${narrative.liked ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
+                        >
+                          <Heart size={16} fill={narrative.liked ? 'currentColor' : 'none'} />
                         </button>
                         <button
-                          onClick={() => showToast('Opening block explorer...', 'info')}
-                          className="btn-secondary text-sm !px-4 !py-2 !rounded-lg flex items-center gap-2"
+                          onClick={() => toggleBookmark(narrative.id)}
+                          className={`p-2 rounded-lg transition-colors ${narrative.bookmarked ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
                         >
-                          <ExternalLink size={14} />
-                          View on Explorer
+                          <Bookmark size={16} fill={narrative.bookmarked ? 'currentColor' : 'none'} />
+                        </button>
+                        <button
+                          onClick={() => showToast('Shared to clipboard!', 'success')}
+                          className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
+                        >
+                          <Share2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => setExpandedId(expandedId === narrative.id ? null : narrative.id)}
+                          className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
+                        >
+                          <ChevronDown size={16} className={`transition-transform ${expandedId === narrative.id ? 'rotate-180' : ''}`} />
                         </button>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+                  </div>
 
-      {filtered.length === 0 && (
-        <div className="text-center py-16">
-          <Brain size={48} className="mx-auto text-[var(--color-text-muted)] mb-4" />
-          <h3 className="font-display font-semibold text-lg text-white mb-2">No narratives found</h3>
-          <p className="text-sm text-[var(--color-text-muted)]">Try adjusting your search or filter criteria.</p>
-        </div>
-      )}
-    </div>
+                  {/* Expanded Details */}
+                  <AnimatePresence>
+                    {expandedId === narrative.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="border-t border-white/5 overflow-hidden"
+                      >
+                        <div className="p-6 bg-white/[0.02]">
+                          <h4 className="font-display font-semibold text-sm text-white mb-3">Key Insights</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                              <div className="text-xs text-[var(--color-text-muted)] mb-1">Pattern Match</div>
+                              <div className="text-sm text-white">Matches 3 previous institutional accumulation cycles with 94% similarity</div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                              <div className="text-xs text-[var(--color-text-muted)] mb-1">Risk Assessment</div>
+                              <div className="text-sm text-white">Low risk of false positive. Multiple independent sources confirm the pattern.</div>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <button onClick={() => showToast('Opening full analysis...', 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
+                              View Full Analysis
+                            </button>
+                            <button
+                              onClick={() => showToast('Opening block explorer...', 'info')}
+                              className="btn-secondary text-sm !px-4 !py-2 !rounded-lg flex items-center gap-2"
+                            >
+                              <ExternalLink size={14} />
+                              View on Explorer
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
+    </DashboardPage>
   );
 }

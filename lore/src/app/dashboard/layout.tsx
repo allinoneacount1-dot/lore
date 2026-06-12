@@ -12,6 +12,7 @@ import { useWalletContext } from '@/components/WalletProvider';
 import { WalletModal, WalletButton } from '@/components/WalletConnect';
 import { useToast } from '@/components/Toast';
 import { LoreLogo } from '@/components/LoreLogo';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const sidebarLinks = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
@@ -360,8 +361,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-auto">
+        <ErrorBoundary>
           {children}
-        </main>
+        </ErrorBoundary>
+      </main>
       </div>
 
       <WalletModal

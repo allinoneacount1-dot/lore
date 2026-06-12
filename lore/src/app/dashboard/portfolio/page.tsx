@@ -8,6 +8,7 @@ import {
   ExternalLink, ChevronRight, PieChart as PieChartIcon
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import { DashboardPage, StatCard, SectionHeader, EmptyState } from '@/app/dashboard/layout';
 
 const COIN_LOGOS: Record<string, string> = {
   BTC: 'https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png',
@@ -41,48 +42,51 @@ export default function PortfolioPage() {
   const totalChange = portfolioData.reduce((sum, p) => sum + (p.value * p.change / 100), 0);
   const totalChangePercent = (totalChange / totalValue) * 100;
 
-  const stats = [
-    { label: 'Total Value', value: `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, icon: DollarSign },
-    { label: '24h Change', value: `${totalChangePercent >= 0 ? '+' : ''}${totalChangePercent.toFixed(2)}%`, icon: totalChangePercent >= 0 ? TrendingUp : ArrowDownRight, color: totalChangePercent >= 0 ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]' },
-    { label: 'Assets', value: portfolioData.length.toString(), icon: Briefcase },
-    { label: 'Best Performer', value: 'SOL (+5.12%)', icon: Star, color: 'text-[var(--color-positive)]' },
-  ];
+  const pageActions = (
+    <>
+      <button onClick={() => showToast('Refreshing portfolio...', 'info')} className="btn-secondary text-sm !px-4 !py-2.5 !rounded-lg flex items-center gap-2">
+        <RefreshCw size={14} /> Refresh
+      </button>
+      <button onClick={() => showToast('Add asset modal coming soon', 'info')} className="btn-primary text-sm !px-4 !py-2.5 !rounded-lg flex items-center gap-2">
+        <Plus size={14} /> Add Asset
+      </button>
+    </>
+  );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-h2 font-display text-white">Portfolio</h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">Track your assets and get AI-powered recommendations.</p>
-        </div>
-        <div className="flex gap-3">
-          <button onClick={() => showToast('Refreshing portfolio...', 'info')} className="btn-secondary text-sm !px-4 !py-2.5 !rounded-lg flex items-center gap-2">
-            <RefreshCw size={14} /> Refresh
-          </button>
-          <button onClick={() => showToast('Add asset modal coming soon', 'info')} className="btn-primary text-sm !px-4 !py-2.5 !rounded-lg flex items-center gap-2">
-            <Plus size={14} /> Add Asset
-          </button>
-        </div>
-      </div>
-
+    <DashboardPage
+      title="Portfolio"
+      subtitle="Track your assets and get AI-powered recommendations."
+      actions={pageActions}
+    >
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="card-glass rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Icon size={14} className={stat.color || 'text-[var(--color-primary)]'} />
-                <span className="text-xs text-[var(--color-text-muted)] font-data">{stat.label}</span>
-              </div>
-              <div className={`text-2xl font-display font-bold ${stat.color || 'text-white'}`}>{stat.value}</div>
-            </div>
-          );
-        })}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Value"
+          value={`$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+          icon={DollarSign}
+        />
+        <StatCard
+          label="24h Change"
+          value={`${totalChangePercent >= 0 ? '+' : ''}${totalChangePercent.toFixed(2)}%`}
+          icon={totalChangePercent >= 0 ? TrendingUp : ArrowDownRight}
+          color={totalChangePercent >= 0 ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'}
+        />
+        <StatCard
+          label="Assets"
+          value={portfolioData.length.toString()}
+          icon={Briefcase}
+        />
+        <StatCard
+          label="Best Performer"
+          value="SOL (+5.12%)"
+          icon={Star}
+          color="text-[var(--color-positive)]"
+        />
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2">
         <button
           onClick={() => setActiveTab('holdings')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -201,6 +205,6 @@ export default function PortfolioPage() {
           ))}
         </div>
       )}
-    </div>
+    </DashboardPage>
   );
 }

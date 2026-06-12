@@ -58,12 +58,15 @@ export default function OverviewPage() {
   const { showToast } = useToast();
   const [currentTime, setCurrentTime] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const update = () => setCurrentTime(new Date().toLocaleTimeString('en-US', { hour12: false }));
     update();
     const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
+    // Simulate initial data load
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => { clearInterval(interval); clearTimeout(timer); };
   }, []);
 
   const handleRefresh = () => {
@@ -75,7 +78,8 @@ export default function OverviewPage() {
   return (
     <DashboardPage
       title="Market Overview"
-      subtitle={`Real-time intelligence • Last scan: ${currentTime || '—'}`}
+      subtitle={loading ? 'Loading...' : `Real-time intelligence • Last scan: ${currentTime || '—'}`}
+      loading={loading}
       actions={
         <div className="flex items-center gap-2">
           <motion.div animate={{ rotate: isRefreshing ? 360 : 0 }} transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0, ease: 'linear' }}>
