@@ -6,17 +6,18 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3, Bell, Globe, LayoutDashboard, Menu, Radio,
-  Search, Settings, Shield, TrendingUp, Wallet, X
+  Search, Settings, Shield, TrendingUp, Wallet, X,
+  FileText, Smile, Briefcase
 } from 'lucide-react';
 import { useWallet, WalletModal, WalletButton } from '@/components/WalletConnect';
 
 const sidebarLinks = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
   { icon: Radio, label: 'Whale Radar', href: '/dashboard/whales' },
+  { icon: FileText, label: 'Narratives', href: '/dashboard/narratives' },
   { icon: Shield, label: 'Exploit Detection', href: '/dashboard/exploits' },
-  { icon: Globe, label: 'Narratives', href: '/dashboard/narratives' },
-  { icon: TrendingUp, label: 'Sentiment', href: '/dashboard/sentiment' },
-  { icon: BarChart3, label: 'Portfolio', href: '/dashboard/portfolio' },
+  { icon: Smile, label: 'Sentiment', href: '/dashboard/sentiment' },
+  { icon: Briefcase, label: 'Portfolio', href: '/dashboard/portfolio' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
