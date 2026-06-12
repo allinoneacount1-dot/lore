@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/Toast';
-import { useWallet } from '@/components/WalletConnect';
+import { useWalletContext } from '@/components/WalletProvider';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -27,22 +27,22 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.3 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.5 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const } },
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
 export default function HeroSection() {
   const { showToast } = useToast();
-  const { wallet, openModal } = useWallet();
+  const { wallet, openModal } = useWalletContext();
   const router = useRouter();
 
   const handleEnterLore = () => {
-    if (wallet) {
+    if (wallet?.connected) {
       router.push('/dashboard');
     } else {
       openModal();
@@ -52,21 +52,23 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Three.js Scene */}
-      <HeroScene />
+      {/* 3D Three.js Scene — z-index 0 */}
+      <div className="absolute inset-0 z-0">
+        <HeroScene />
+      </div>
 
-      {/* Gradient overlays for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-bg-primary)]/60 via-transparent to-[var(--color-bg-primary)] pointer-events-none z-[1]" />
+      {/* Gradient overlay for depth — z-index 1, pointer-events-none so it doesn't block clicks */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[var(--color-bg-primary)]/70 via-[var(--color-bg-primary)]/20 to-[var(--color-bg-primary)] pointer-events-none" />
 
-      {/* Content */}
+      {/* Content — z-index 2, above everything */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative z-10 max-w-4xl mx-auto px-5 text-center"
+        className="relative z-[2] max-w-4xl mx-auto px-5 text-center pt-24 pb-12"
       >
         {/* Headline */}
-        <motion.h1 variants={item} className="text-hero font-display text-white leading-[1.05]">
+        <motion.h1 variants={item} className="text-h1 font-display text-white leading-[1.1]">
           The Intelligence Layer{' '}
           <span className="text-gradient">for Crypto Markets</span>
         </motion.h1>
