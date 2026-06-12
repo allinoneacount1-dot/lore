@@ -1,3 +1,4 @@
+// src/app/dashboard/layout.tsx
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
@@ -8,8 +9,7 @@ import {
   Settings, Shield, Wallet, X,
   FileText, Smile, Briefcase, ChevronLeft, ChevronRight,
 } from 'lucide-react';
-import { useWalletContext } from '@/components/WalletProvider';
-import { WalletModal, WalletButton } from '@/components/WalletConnect';
+import { WalletButton } from '@/components/WalletConnect';
 import { useToast } from '@/components/Toast';
 import { LoreLogo } from '@/components/LoreLogo';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -34,16 +34,6 @@ export function SkeletonCard() {
       <Skeleton className="h-3 w-24" />
       <Skeleton className="h-7 w-32" />
       <Skeleton className="h-3 w-16" />
-    </div>
-  );
-}
-
-export function SkeletonTable({ rows = 5 }: { rows?: number }) {
-  return (
-    <div className="space-y-2">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-12 w-full" />
-      ))}
     </div>
   );
 }
@@ -123,40 +113,6 @@ export function EmptyState({
   );
 }
 
-export function ErrorFallback({
-  message = 'Something went wrong',
-  onRetry,
-}: {
-  message?: string;
-  onRetry?: () => void;
-}) {
-  return (
-    <div className="text-center py-12">
-      <div className="w-12 h-12 rounded-xl bg-[var(--color-negative)]/10 flex items-center justify-center mx-auto mb-3">
-        <Shield size={24} className="text-[var(--color-negative)]" />
-      </div>
-      <h3 className="font-display font-semibold text-white mb-1">{message}</h3>
-      <p className="text-sm text-[var(--color-text-muted)] mb-4">Please try again or contact support.</p>
-      {onRetry && (
-        <button onClick={onRetry} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
-          Retry
-        </button>
-      )}
-    </div>
-  );
-}
-
-export function LiveClock() {
-  const [time, setTime] = useState('');
-  useEffect(() => {
-    const update = () => setTime(new Date().toLocaleTimeString('en-US', { hour12: false }));
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, []);
-  return <span className="font-data text-xs text-[var(--color-text-muted)]">{time || '—'}</span>;
-}
-
 export function DashboardPage({
   children,
   title,
@@ -200,7 +156,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { showToast } = useToast();
-  const { wallet, connecting, showModal, setShowModal, openModal, connect, disconnect, copied, copyAddress } = useWalletContext();
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)] flex">
@@ -250,22 +205,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         <div className="p-4 border-t border-white/5">
           {sidebarCollapsed ? (
-            <button
-              onClick={() => setShowModal(true)}
-              className="w-full p-2.5 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center hover:bg-[var(--color-primary)]/20 transition-colors"
-              aria-label="Connect wallet"
-            >
+            <div className="w-full p-2.5 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
               <Wallet size={18} />
-            </button>
+            </div>
           ) : (
-            <WalletButton
-              wallet={wallet}
-              onOpenModal={() => setShowModal(true)}
-              onDisconnect={disconnect}
-              onCopyAddress={copyAddress}
-              copied={copied}
-              variant="dashboard"
-            />
+            <WalletButton />
           )}
         </div>
       </motion.aside>
@@ -313,14 +257,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 })}
               </nav>
               <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/5">
-                <WalletButton
-                  wallet={wallet}
-                  onOpenModal={() => { setShowModal(true); setSidebarOpen(false); }}
-                  onDisconnect={disconnect}
-                  onCopyAddress={copyAddress}
-                  copied={copied}
-                  variant="mobile"
-                />
+                <WalletButton />
               </div>
             </motion.aside>
           </motion.div>
@@ -361,18 +298,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-auto">
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
-      </main>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </main>
       </div>
-
-      <WalletModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onConnect={connect}
-        connecting={connecting}
-      />
     </div>
   );
 }

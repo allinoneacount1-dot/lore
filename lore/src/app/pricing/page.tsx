@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Sparkles, Zap, Crown, ArrowRight, HelpCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
-import { useWalletContext } from '@/components/WalletProvider';
+import { useUnifiedWallet } from '@/hooks/useWallet';
 import { useToast } from '@/components/Toast';
 import { useRouter } from 'next/navigation';
 
@@ -130,26 +130,24 @@ const comparisonRows = [
 export default function PricingPage() {
   const [annual, setAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const { wallet, openModal } = useWalletContext();
+  const wallet = useUnifiedWallet();
   const { showToast } = useToast();
   const router = useRouter();
 
   const handleStartSeeker = () => {
-    if (wallet?.connected) {
+    if (wallet.connected) {
       router.push('/dashboard');
     } else {
       showToast('Connect your wallet to get started', 'info');
-      openModal();
     }
   };
 
   const handleStartTrial = () => {
-    if (wallet?.connected) {
+    if (wallet.connected) {
       showToast('7-day free trial activated! 🎉', 'success');
       router.push('/dashboard');
     } else {
       showToast('Connect your wallet to start your free trial', 'info');
-      openModal();
     }
   };
 

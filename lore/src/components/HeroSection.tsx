@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/Toast';
-import { useWalletContext } from '@/components/WalletProvider';
+import { useUnifiedWallet } from '@/hooks/useWallet';
 import { useRouter } from 'next/navigation';
+import { WalletButton } from './WalletConnect';
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -27,14 +28,13 @@ const item = {
 
 export default function HeroSection() {
   const { showToast } = useToast();
-  const { wallet, openModal } = useWalletContext();
+  const wallet = useUnifiedWallet();
   const router = useRouter();
 
   const handleEnterLore = () => {
-    if (wallet?.connected) {
+    if (wallet.connected) {
       router.push('/dashboard');
     } else {
-      openModal();
       showToast('Connect your wallet to enter the Lore', 'info');
     }
   };

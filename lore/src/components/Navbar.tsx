@@ -5,10 +5,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LogOut, User } from 'lucide-react';
+import { WalletButton } from '@/components/WalletConnect';
+import { useAuth } from '@/components/AuthProvider';
 import { LoreLogo } from './LoreLogo';
-import { useWalletContext } from './WalletProvider';
-import { WalletModal, WalletButton } from './WalletConnect';
-import { useAuth } from './AuthProvider';
 
 const navLinks = [
   { label: 'Intelligence', href: '#intelligence' },
@@ -21,18 +20,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { wallet, connecting, showModal, setShowModal, openModal, connect, disconnect, copied, copyAddress } = useWalletContext();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleConnect = async (walletName: string) => {
-    await connect(walletName);
-  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -47,13 +41,13 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${
           scrolled
-            ? 'bg-[var(--color-bg-primary)]/80 backdrop-blur-xl border-b border-white/5'
+            ? 'bg-[#070708]/80 backdrop-blur-xl border-b border-white/5'
             : 'bg-transparent'
         }`}
       >
         <div className="max-w-[1280px] mx-auto px-5 lg:px-20 h-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <LoreLogo className="w-8 h-8 group-hover:shadow-[0_0_20px_rgba(108,92,231,0.3)] transition-shadow" />
+            <LoreLogo className="w-8 h-8" />
             <span className="font-display font-bold text-xl text-white">LORE</span>
           </Link>
 
@@ -75,7 +69,6 @@ export default function Navbar() {
               <span className="font-data text-xs text-[var(--color-text-muted)]">LIVE</span>
             </div>
 
-            {/* Auth: Show user avatar or connect buttons */}
             {user ? (
               <div className="relative">
                 <button
@@ -83,11 +76,7 @@ export default function Navbar() {
                   className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-all"
                 >
                   {user.user_metadata?.avatar_url ? (
-                    <img
-                      src={user.user_metadata.avatar_url}
-                      alt="Avatar"
-                      className="w-6 h-6 rounded-full"
-                    />
+                    <img src={user.user_metadata.avatar_url} alt="" className="w-6 h-6 rounded-full" />
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
                       <User size={12} className="text-[var(--color-primary)]" />
@@ -139,13 +128,7 @@ export default function Navbar() {
                 >
                   Sign In
                 </Link>
-                <WalletButton
-                  wallet={wallet}
-                  onOpenModal={openModal}
-                  onDisconnect={disconnect}
-                  onCopyAddress={copyAddress}
-                  copied={copied}
-                />
+                <WalletButton />
               </>
             )}
           </div>
@@ -166,7 +149,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-xl pt-20"
+            className="fixed inset-0 z-40 bg-[#070708]/95 backdrop-blur-xl pt-20"
           >
             <div className="flex flex-col items-center gap-8 pt-12">
               {navLinks.map((link) => (
@@ -179,50 +162,20 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              {user ? (
-                <div className="flex flex-col items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <User size={16} className="text-[var(--color-primary)]" />
-                    <span className="text-sm text-white">{user.email}</span>
-                  </div>
-                  <button
-                    onClick={handleSignOut}
-                    className="btn-secondary text-sm"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="btn-secondary text-sm"
-                  >
-                    Sign In
-                  </Link>
-                  <WalletButton
-                    wallet={wallet}
-                    onOpenModal={() => { setShowModal(true); setMobileOpen(false); }}
-                    onDisconnect={disconnect}
-                    onCopyAddress={copyAddress}
-                    copied={copied}
-                    variant="mobile"
-                  />
-                </>
+              {!user && (
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn-secondary text-sm"
+                >
+                  Sign In
+                </Link>
               )}
+              <WalletButton />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Wallet Modal */}
-      <WalletModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onConnect={handleConnect}
-        connecting={connecting}
-      />
     </>
   );
 }

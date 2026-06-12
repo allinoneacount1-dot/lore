@@ -2,8 +2,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { User } from '@supabase/supabase-js';
-import { getUser, onAuthStateChange, signInWithGoogle as doSignIn, signOut as doSignOut } from '@/lib/supabase/auth';
+import type { User, AuthError, Subscription } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
 interface AuthContextType {
   user: User | null;
@@ -28,15 +28,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const supabase = createClient();
+
     // Check initial session
-    getUser().then(({ user }) => {
-      setUser(user);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
     // Listen for auth changes
-    const subscription = onAuthStateChange((event, newUser) => {
-      setUser(newUser);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
@@ -46,11 +50,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    await doSignIn();
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
   };
 
   const signOut = async () => {
-    await doSignOut();
+    const supabase = createClient();
+    await supabase.auth.signOut();
     setUser(null);
   };
 
