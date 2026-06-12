@@ -143,7 +143,7 @@ function FearGreedGauge({ score }: { score: number }) {
       <div className="text-center -mt-2">
         <div className="text-5xl font-display font-bold" style={{ color }}>{score}</div>
         <div className="text-sm font-medium mt-1" style={{ color }}>{label}</div>
-        <div className="flex items-center justify-center gap-1 mt-2 text-xs text-[#FF5252]">
+        <div className="flex items-center justify-center gap-1 mt-2 text-xs text-[var(--color-negative)]">
           <TrendingDown size={12} />
           <span>{overallSentiment.change}% (24h)</span>
         </div>
@@ -156,14 +156,14 @@ export default function SentimentPage() {
   const [activeSource, setActiveSource] = useState('All');
 
   const getSentimentColor = (s: string) => {
-    if (s === 'bullish') return 'text-[#00E676]';
-    if (s === 'bearish') return 'text-[#FF5252]';
-    return 'text-[#42A5F5]';
+    if (s === 'bullish') return 'text-[var(--color-positive)]';
+    if (s === 'bearish') return 'text-[var(--color-negative)]';
+    return 'text-[var(--color-info)]';
   };
 
   const getSentimentBg = (s: string) => {
-    if (s === 'bullish') return 'bg-[#00E676]';
-    if (s === 'bearish') return 'bg-[#FF5252]';
+    if (s === 'bullish') return 'bg-[var(--color-positive)]';
+    if (s === 'bearish') return 'bg-[var(--color-negative)]';
     return 'bg-[#5A5A72]';
   };
 
@@ -171,7 +171,7 @@ export default function SentimentPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-h2 font-display text-white">Sentiment Analysis</h1>
-        <p className="mt-2 text-[#A0A0B8]">
+        <p className="mt-2 text-[var(--color-text-secondary)]">
           Real-time social sentiment from 6 sources. AI-powered mood detection.
         </p>
       </div>
@@ -181,18 +181,18 @@ export default function SentimentPage() {
         {/* Fear & Greed Gauge */}
         <div className="md:col-span-1 card-glass rounded-2xl p-6 flex flex-col items-center justify-center">
           <div className="flex items-center gap-2 mb-4 self-start">
-            <Brain size={16} className="text-[#6C5CE7]"/>
-            <span className="text-xs font-data text-[#5A5A72] uppercase tracking-wider">Fear & Greed Index</span>
+            <Brain size={16} className="text-[var(--color-primary)]"/>
+            <span className="text-xs font-data text-[var(--color-text-muted)] uppercase tracking-wider">Fear & Greed Index</span>
           </div>
           <FearGreedGauge score={overallSentiment.score} />
           <div className="w-full grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/5">
             <div className="text-center">
-              <div className="text-xs text-[#5A5A72]">Yesterday</div>
+              <div className="text-xs text-[var(--color-text-muted)]">Yesterday</div>
               <div className="text-sm font-data text-[#FF9F43]">47</div>
             </div>
             <div className="text-center">
-              <div className="text-xs text-[#5A5A72]">Last Week</div>
-              <div className="text-sm font-data text-[#00E676]">61</div>
+              <div className="text-xs text-[var(--color-text-muted)]">Last Week</div>
+              <div className="text-sm font-data text-[var(--color-positive)]">61</div>
             </div>
           </div>
         </div>
@@ -208,27 +208,27 @@ export default function SentimentPage() {
                   source.type === 'reddit' ? 'bg-[#FF4500]/10 text-[#FF4500]' :
                   source.type === 'discord' ? 'bg-[#5865F2]/10 text-[#5865F2]' :
                   source.type === 'telegram' ? 'bg-[#26A5E4]/10 text-[#26A5E4]' :
-                  source.type === 'news' ? 'bg-[#FFD93D]/10 text-[#FFD93D]' :
-                  'bg-[#6C5CE7]/10 text-[#6C5CE7]'
+                  source.type === 'news' ? 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]' :
+                  'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                 }`}>
                   <SocialLogo type={source.type} className="w-4 h-4" />
                 </div>
                 <div className="w-20 text-sm text-white font-medium">{source.source}</div>
                 <div className="flex-1 flex h-3 rounded-full overflow-hidden bg-white/5">
-                  <div className="bg-[#00E676] transition-all" style={{ width: `${source.bullish}%` }}/>
+                  <div className="bg-[var(--color-positive)] transition-all" style={{ width: `${source.bullish}%` }}/>
                   <div className="bg-[#5A5A72] transition-all" style={{ width: `${source.neutral}%` }}/>
-                  <div className="bg-[#FF5252] transition-all" style={{ width: `${source.bearish}%` }}/>
+                  <div className="bg-[var(--color-negative)] transition-all" style={{ width: `${source.bearish}%` }}/>
                 </div>
                 <div className="w-24 text-right">
-                  <span className="text-xs text-[#5A5A72] font-data">{source.volume}</span>
+                  <span className="text-xs text-[var(--color-text-muted)] font-data">{source.volume}</span>
                 </div>
               </div>
             ))}
           </div>
           <div className="flex items-center gap-6 mt-4 pt-4 border-t border-white/5">
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#00E676]"/><span className="text-xs text-[#5A5A72]">Bullish</span></div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#5A5A72]"/><span className="text-xs text-[#5A5A72]">Neutral</span></div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#FF5252]"/><span className="text-xs text-[#5A5A72]">Bearish</span></div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[var(--color-positive)]"/><span className="text-xs text-[var(--color-text-muted)]">Bullish</span></div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#5A5A72]"/><span className="text-xs text-[var(--color-text-muted)]">Neutral</span></div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[var(--color-negative)]"/><span className="text-xs text-[var(--color-text-muted)]">Bearish</span></div>
           </div>
         </div>
       </div>
@@ -238,11 +238,11 @@ export default function SentimentPage() {
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-display font-semibold text-white">Trending Topics</h3>
           <div className="flex items-center gap-2">
-            <Filter size={14} className="text-[#5A5A72]"/>
+            <Filter size={14} className="text-[var(--color-text-muted)]"/>
             <select className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white focus:outline-none">
-              <option value="24h" className="bg-[#12121A]">Last 24h</option>
-              <option value="7d" className="bg-[#12121A]">Last 7 days</option>
-              <option value="30d" className="bg-[#12121A]">Last 30 days</option>
+              <option value="24h" className="bg-[var(--color-bg-card)]">Last 24h</option>
+              <option value="7d" className="bg-[var(--color-bg-card)]">Last 7 days</option>
+              <option value="30d" className="bg-[var(--color-bg-card)]">Last 30 days</option>
             </select>
           </div>
         </div>
@@ -254,16 +254,16 @@ export default function SentimentPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#6C5CE7]/20 transition-all cursor-pointer"
+              className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[var(--color-primary)]/20 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full ${getSentimentBg(topic.sentiment)}`}/>
                 <div>
                   <div className="text-sm font-medium text-white">{topic.topic}</div>
-                  <div className="text-xs text-[#5A5A72] font-data">{topic.mentions.toLocaleString()} mentions</div>
+                  <div className="text-xs text-[var(--color-text-muted)] font-data">{topic.mentions.toLocaleString()} mentions</div>
                 </div>
               </div>
-              <div className={`flex items-center gap-1 text-xs font-data ${topic.change >= 0 ? 'text-[#00E676]' : 'text-[#FF5252]'}`}>
+              <div className={`flex items-center gap-1 text-xs font-data ${topic.change >= 0 ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'}`}>
                 {topic.change >= 0 ? <TrendingUp size={12}/> : <TrendingDown size={12}/>}
                 {topic.change >= 0 ? '+' : ''}{topic.change}%
               </div>

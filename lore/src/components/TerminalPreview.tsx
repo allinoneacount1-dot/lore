@@ -64,7 +64,7 @@ export default function TerminalPreview() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="font-data text-xs tracking-[0.25em] uppercase text-[#6C5CE7]">
+          <span className="font-data text-xs tracking-[0.25em] uppercase text-[var(--color-primary)]">
             ◆ Live Terminal
           </span>
           <h2 className="text-h2 font-display text-white mt-4">
@@ -79,30 +79,30 @@ export default function TerminalPreview() {
           className="max-w-4xl mx-auto"
         >
           {/* Terminal window */}
-          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0D0D12] shadow-2xl shadow-black/50">
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[var(--color-bg-surface)] shadow-2xl shadow-black/50">
             {/* Title bar */}
-            <div className="flex items-center gap-2 px-5 py-3 bg-[#12121A] border-b border-white/5">
+            <div className="flex items-center gap-2 px-5 py-3 bg-[var(--color-bg-card)] border-b border-white/5">
               <div className="w-3 h-3 rounded-full bg-[#FF5252]" />
               <div className="w-3 h-3 rounded-full bg-[#FFD93D]" />
               <div className="w-3 h-3 rounded-full bg-[#00E676]" />
-              <span className="ml-3 font-data text-xs text-[#5A5A72]">lore-terminal</span>
+              <span className="ml-3 font-data text-xs text-[var(--color-text-muted)]">lore-terminal</span>
             </div>
 
             {/* Terminal content */}
             <div className="p-6 font-data text-sm leading-relaxed h-[480px] overflow-hidden">
               {terminalLines.slice(0, visibleLines).map((line, i) => (
                 <div key={i} className={`${
-                  line.startsWith('[LORE]') ? 'text-[#6C5CE7]' :
+                  line.startsWith('[LORE]') ? 'text-[var(--color-primary)]' :
                   line.startsWith('│ ▸') ? 'text-white font-semibold' :
-                  line.startsWith('│   ') ? 'text-[#A0A0B8]' :
-                  line.startsWith('│') ? 'text-[#6C5CE7]' :
-                  line.startsWith('$') ? 'text-[#00E676]' :
-                  'text-[#5A5A72]'
+                  line.startsWith('│   ') ? 'text-[var(--color-text-secondary)]' :
+                  line.startsWith('│') ? 'text-[var(--color-primary)]' :
+                  line.startsWith('$') ? 'text-[var(--color-positive)]' :
+                  'text-[var(--color-text-muted)]'
                 }`}>
                   {line || '\u00A0'}
                 </div>
               ))}
-              <span className="inline-block w-2 h-4 bg-[#6C5CE7] animate-pulse" />
+              <span className="inline-block w-2 h-4 bg-[var(--color-primary)] animate-pulse" />
             </div>
           </div>
         </motion.div>

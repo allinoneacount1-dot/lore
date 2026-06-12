@@ -57,7 +57,7 @@ export default function HeroSection() {
         {Array.from({ length: 25 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 rounded-full bg-[#6C5CE7]/20"
+            className="absolute w-1 h-1 rounded-full bg-[var(--color-primary)]/20"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -82,12 +82,6 @@ export default function HeroSection() {
         animate="show"
         className="relative z-10 max-w-4xl mx-auto px-5 text-center"
       >
-        {/* Badge */}
-        <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#6C5CE7]/30 bg-[#6C5CE7]/5 mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#6C5CE7]" />
-          <span className="font-data text-xs tracking-widest text-[#6C5CE7]">NOW IN PRIVATE BETA</span>
-        </motion.div>
-
         {/* Headline */}
         <motion.h1 variants={item} className="text-hero font-display text-white leading-[1.05]">
           The Intelligence Layer{' '}
@@ -95,7 +89,7 @@ export default function HeroSection() {
         </motion.h1>
 
         {/* Subheadline */}
-        <motion.p variants={item} className="mt-6 text-lg md:text-xl text-[#A0A0B8] max-w-2xl mx-auto leading-relaxed">
+        <motion.p variants={item} className="mt-6 text-lg md:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto leading-relaxed">
           Lore reads the blockchain like a living story. Every transaction a sentence.
           Every wallet a character. Every market move a plot twist.
         </motion.p>
@@ -106,10 +100,6 @@ export default function HeroSection() {
             Enter the Lore
             <ArrowRight size={18} />
           </button>
-          <button onClick={handleWatchDemo} className="btn-secondary flex items-center gap-2 w-full sm:w-auto justify-center">
-            <Play size={16} />
-            Watch Demo
-          </button>
         </motion.div>
 
         {/* Stats */}
@@ -119,7 +109,7 @@ export default function HeroSection() {
               <div className="font-data text-2xl md:text-3xl font-bold text-white">
                 {stat.value}
               </div>
-              <div className="mt-1 text-xs text-[#5A5A72] font-data">{stat.label}</div>
+              <div className="mt-1 text-xs text-[var(--color-text-muted)] font-data">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -129,7 +119,7 @@ export default function HeroSection() {
           variants={item}
           className="mt-16 flex flex-col items-center gap-2"
         >
-          <span className="text-xs text-[#5A5A72] font-data">SCROLL</span>
+          <span className="text-xs text-[var(--color-text-muted)] font-data">SCROLL</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}

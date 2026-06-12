@@ -53,10 +53,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl min-w-[280px] ${
-                toast.type === 'success' ? 'bg-[#00E676]/10 border-[#00E676]/20 text-[#00E676]' :
-                toast.type === 'error' ? 'bg-[#FF5252]/10 border-[#FF5252]/20 text-[#FF5252]' :
-                toast.type === 'warning' ? 'bg-[#FFD93D]/10 border-[#FFD93D]/20 text-[#FFD93D]' :
-                'bg-[#42A5F5]/10 border-[#42A5F5]/20 text-[#42A5F5]'
+                toast.type === 'success' ? 'bg-[var(--color-positive)]/10 border-[var(--color-positive)]/20 text-[var(--color-positive)]' :
+                toast.type === 'error' ? 'bg-[var(--color-negative)]/10 border-[#FF5252]/20 text-[var(--color-negative)]' :
+                toast.type === 'warning' ? 'bg-[var(--color-warning)]/10 border-[#FFD93D]/20 text-[var(--color-warning)]' :
+                'bg-[var(--color-info)]/10 border-[#42A5F5]/20 text-[var(--color-info)]'
               }`}
             >
               {toast.type === 'success' && <Check size={16} />}

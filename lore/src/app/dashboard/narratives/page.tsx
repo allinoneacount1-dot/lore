@@ -135,9 +135,9 @@ export default function NarrativesPage() {
   };
 
   const getSentimentColor = (s: string) => {
-    if (s === 'bullish') return 'text-[#00E676] bg-[#00E676]/10 border-[#00E676]/20';
-    if (s === 'bearish') return 'text-[#FF5252] bg-[#FF5252]/10 border-[#FF5252]/20';
-    return 'text-[#42A5F5] bg-[#42A5F5]/10 border-[#42A5F5]/20';
+    if (s === 'bullish') return 'text-[var(--color-positive)] bg-[var(--color-positive)]/10 border-[var(--color-positive)]/20';
+    if (s === 'bearish') return 'text-[var(--color-negative)] bg-[var(--color-negative)]/10 border-[#FF5252]/20';
+    return 'text-[var(--color-info)] bg-[var(--color-info)]/10 border-[#42A5F5]/20';
   };
 
   const getSentimentIcon = (s: string) => {
@@ -151,7 +151,7 @@ export default function NarrativesPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-h2 font-display text-white">Narratives</h1>
-        <p className="mt-2 text-[#A0A0B8]">
+        <p className="mt-2 text-[var(--color-text-secondary)]">
           AI-generated market narratives from 14+ data sources. Updated in real-time.
         </p>
       </div>
@@ -159,17 +159,17 @@ export default function NarrativesPage() {
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A5A72]" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
           <input
             type="text"
             placeholder="Search narratives, tags, categories..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-[#5A5A72] focus:outline-none focus:border-[#6C5CE7]/50 focus:ring-1 focus:ring-[#6C5CE7]/20 transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]/50 focus:ring-1 focus:ring-[var(--color-primary)]/20 transition-all"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={16} className="text-[#5A5A72]" />
+          <Filter size={16} className="text-[var(--color-text-muted)]" />
           <div className="flex gap-2 flex-wrap">
             {categories.map((cat) => (
               <button
@@ -177,8 +177,8 @@ export default function NarrativesPage() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   activeCategory === cat
-                    ? 'bg-[#6C5CE7]/10 text-[#6C5CE7] border border-[#6C5CE7]/30'
-                    : 'bg-white/5 text-[#A0A0B8] border border-white/10 hover:bg-white/10'
+                    ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/30'
+                    : 'bg-white/5 text-[var(--color-text-secondary)] border border-white/10 hover:bg-white/10'
                 }`}
               >
                 {cat}
@@ -200,8 +200,8 @@ export default function NarrativesPage() {
           return (
             <div key={stat.label} className="card-glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Icon size={14} className="text-[#6C5CE7]" />
-                <span className="text-xs text-[#5A5A72] font-data">{stat.label}</span>
+                <Icon size={14} className="text-[var(--color-primary)]" />
+                <span className="text-xs text-[var(--color-text-muted)] font-data">{stat.label}</span>
               </div>
               <div className="text-2xl font-display font-bold text-white">{stat.value}</div>
             </div>
@@ -219,7 +219,7 @@ export default function NarrativesPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ delay: i * 0.05 }}
-              className="card-glass rounded-2xl overflow-hidden hover:border-[#6C5CE7]/20 transition-all"
+              className="card-glass rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/20 transition-all"
             >
               <div className="p-6">
                 {/* Top Row */}
@@ -230,10 +230,10 @@ export default function NarrativesPage() {
                         {getSentimentIcon(narrative.sentiment)}
                         {narrative.sentiment.charAt(0).toUpperCase() + narrative.sentiment.slice(1)}
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[#A0A0B8] border border-white/10">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[var(--color-text-secondary)] border border-white/10">
                         {narrative.category}
                       </span>
-                      <span className="font-data text-xs text-[#5A5A72] flex items-center gap-1">
+                      <span className="font-data text-xs text-[var(--color-text-muted)] flex items-center gap-1">
                         <Clock size={12} />
                         {narrative.timestamp}
                       </span>
@@ -241,7 +241,7 @@ export default function NarrativesPage() {
                     <h3 className="font-display font-semibold text-lg text-white mb-2">
                       {narrative.title}
                     </h3>
-                    <p className="text-sm text-[#A0A0B8] leading-relaxed">
+                    <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
                       {narrative.summary}
                     </p>
                   </div>
@@ -250,7 +250,7 @@ export default function NarrativesPage() {
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {narrative.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[#5A5A72]">
+                    <span key={tag} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[var(--color-text-muted)]">
                       #{tag}
                     </span>
                   ))}
@@ -262,38 +262,38 @@ export default function NarrativesPage() {
                     <div className="flex items-center gap-1.5">
                       <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[#00E676]' : narrative.confidence >= 60 ? 'bg-[#FFD93D]' : 'bg-[#FF5252]'}`}
+                          className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[var(--color-positive)]' : narrative.confidence >= 60 ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-negative)]'}`}
                           style={{ width: `${narrative.confidence}%` }}
                         />
                       </div>
-                      <span className="font-data text-xs text-[#5A5A72]">{narrative.confidence}% confidence</span>
+                      <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.confidence}% confidence</span>
                     </div>
-                    <span className="font-data text-xs text-[#5A5A72]">{narrative.sources} sources</span>
-                    <span className="font-data text-xs text-[#5A5A72]">{narrative.wallets} wallets</span>
-                    <span className="font-data text-xs text-[#5A5A72]">ETA: {narrative.timeframe}</span>
+                    <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.sources} sources</span>
+                    <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.wallets} wallets</span>
+                    <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {narrative.timeframe}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleLike(narrative.id)}
-                      className={`p-2 rounded-lg transition-colors ${narrative.liked ? 'bg-[#FF5252]/10 text-[#FF5252]' : 'hover:bg-white/5 text-[#5A5A72]'}`}
+                      className={`p-2 rounded-lg transition-colors ${narrative.liked ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
                     >
                       <Heart size={16} fill={narrative.liked ? 'currentColor' : 'none'} />
                     </button>
                     <button
                       onClick={() => toggleBookmark(narrative.id)}
-                      className={`p-2 rounded-lg transition-colors ${narrative.bookmarked ? 'bg-[#6C5CE7]/10 text-[#6C5CE7]' : 'hover:bg-white/5 text-[#5A5A72]'}`}
+                      className={`p-2 rounded-lg transition-colors ${narrative.bookmarked ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
                     >
                       <Bookmark size={16} fill={narrative.bookmarked ? 'currentColor' : 'none'} />
                     </button>
                     <button
                       onClick={() => showToast('Shared to clipboard!', 'success')}
-                      className="p-2 rounded-lg hover:bg-white/5 text-[#5A5A72] transition-colors"
+                      className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
                     >
                       <Share2 size={16} />
                     </button>
                     <button
                       onClick={() => setExpandedId(expandedId === narrative.id ? null : narrative.id)}
-                      className="p-2 rounded-lg hover:bg-white/5 text-[#5A5A72] transition-colors"
+                      className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
                     >
                       <ChevronDown size={16} className={`transition-transform ${expandedId === narrative.id ? 'rotate-180' : ''}`} />
                     </button>
@@ -315,11 +315,11 @@ export default function NarrativesPage() {
                       <h4 className="font-display font-semibold text-sm text-white mb-3">Key Insights</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                          <div className="text-xs text-[#5A5A72] mb-1">Pattern Match</div>
+                          <div className="text-xs text-[var(--color-text-muted)] mb-1">Pattern Match</div>
                           <div className="text-sm text-white">Matches 3 previous institutional accumulation cycles with 94% similarity</div>
                         </div>
                         <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                          <div className="text-xs text-[#5A5A72] mb-1">Risk Assessment</div>
+                          <div className="text-xs text-[var(--color-text-muted)] mb-1">Risk Assessment</div>
                           <div className="text-sm text-white">Low risk of false positive. Multiple independent sources confirm the pattern.</div>
                         </div>
                       </div>
@@ -346,9 +346,9 @@ export default function NarrativesPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-16">
-          <Brain size={48} className="mx-auto text-[#5A5A72] mb-4" />
+          <Brain size={48} className="mx-auto text-[var(--color-text-muted)] mb-4" />
           <h3 className="font-display font-semibold text-lg text-white mb-2">No narratives found</h3>
-          <p className="text-sm text-[#5A5A72]">Try adjusting your search or filter criteria.</p>
+          <p className="text-sm text-[var(--color-text-muted)]">Try adjusting your search or filter criteria.</p>
         </div>
       )}
     </div>

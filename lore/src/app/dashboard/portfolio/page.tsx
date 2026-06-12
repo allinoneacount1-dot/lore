@@ -43,9 +43,9 @@ export default function PortfolioPage() {
 
   const stats = [
     { label: 'Total Value', value: `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, icon: DollarSign },
-    { label: '24h Change', value: `${totalChangePercent >= 0 ? '+' : ''}${totalChangePercent.toFixed(2)}%`, icon: totalChangePercent >= 0 ? TrendingUp : ArrowDownRight, color: totalChangePercent >= 0 ? 'text-[#00E676]' : 'text-[#FF5252]' },
+    { label: '24h Change', value: `${totalChangePercent >= 0 ? '+' : ''}${totalChangePercent.toFixed(2)}%`, icon: totalChangePercent >= 0 ? TrendingUp : ArrowDownRight, color: totalChangePercent >= 0 ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]' },
     { label: 'Assets', value: portfolioData.length.toString(), icon: Briefcase },
-    { label: 'Best Performer', value: 'SOL (+5.12%)', icon: Star, color: 'text-[#00E676]' },
+    { label: 'Best Performer', value: 'SOL (+5.12%)', icon: Star, color: 'text-[var(--color-positive)]' },
   ];
 
   return (
@@ -53,7 +53,7 @@ export default function PortfolioPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-h2 font-display text-white">Portfolio</h1>
-          <p className="mt-2 text-[#A0A0B8]">Track your assets and get AI-powered recommendations.</p>
+          <p className="mt-2 text-[var(--color-text-secondary)]">Track your assets and get AI-powered recommendations.</p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => showToast('Refreshing portfolio...', 'info')} className="btn-secondary text-sm !px-4 !py-2.5 !rounded-lg flex items-center gap-2">
@@ -72,8 +72,8 @@ export default function PortfolioPage() {
           return (
             <div key={stat.label} className="card-glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Icon size={14} className={stat.color || 'text-[#6C5CE7]'} />
-                <span className="text-xs text-[#5A5A72] font-data">{stat.label}</span>
+                <Icon size={14} className={stat.color || 'text-[var(--color-primary)]'} />
+                <span className="text-xs text-[var(--color-text-muted)] font-data">{stat.label}</span>
               </div>
               <div className={`text-2xl font-display font-bold ${stat.color || 'text-white'}`}>{stat.value}</div>
             </div>
@@ -86,7 +86,7 @@ export default function PortfolioPage() {
         <button
           onClick={() => setActiveTab('holdings')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            activeTab === 'holdings' ? 'bg-[#6C5CE7]/10 text-[#6C5CE7] border border-[#6C5CE7]/30' : 'bg-white/5 text-[#A0A0B8] border border-white/10'
+            activeTab === 'holdings' ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/30' : 'bg-white/5 text-[var(--color-text-secondary)] border border-white/10'
           }`}
         >
           Holdings
@@ -94,7 +94,7 @@ export default function PortfolioPage() {
         <button
           onClick={() => setActiveTab('recommendations')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            activeTab === 'recommendations' ? 'bg-[#6C5CE7]/10 text-[#6C5CE7] border border-[#6C5CE7]/30' : 'bg-white/5 text-[#A0A0B8] border border-white/10'
+            activeTab === 'recommendations' ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/30' : 'bg-white/5 text-[var(--color-text-secondary)] border border-white/10'
           }`}
         >
           AI Recommendations
@@ -107,12 +107,12 @@ export default function PortfolioPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/5">
-                  <th className="text-left px-6 py-4 text-xs text-[#5A5A72] font-data">Asset</th>
-                  <th className="text-right px-6 py-4 text-xs text-[#5A5A72] font-data">Amount</th>
-                  <th className="text-right px-6 py-4 text-xs text-[#5A5A72] font-data">Value</th>
-                  <th className="text-right px-6 py-4 text-xs text-[#5A5A72] font-data">24h</th>
-                  <th className="text-right px-6 py-4 text-xs text-[#5A5A72] font-data">Allocation</th>
-                  <th className="text-right px-6 py-4 text-xs text-[#5A5A72] font-data">Action</th>
+                  <th className="text-left px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">Asset</th>
+                  <th className="text-right px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">Amount</th>
+                  <th className="text-right px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">Value</th>
+                  <th className="text-right px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">24h</th>
+                  <th className="text-right px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">Allocation</th>
+                  <th className="text-right px-6 py-4 text-xs text-[var(--color-text-muted)] font-data">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,14 +134,14 @@ export default function PortfolioPage() {
                         />
                         <div>
                           <div className="text-sm font-medium text-white">{asset.symbol}</div>
-                          <div className="text-xs text-[#5A5A72]">{asset.name}</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">{asset.name}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right font-data text-sm text-white">{asset.amount.toLocaleString()}</td>
                     <td className="px-6 py-4 text-right font-data text-sm text-white">${asset.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="px-6 py-4 text-right">
-                      <span className={`font-data text-sm flex items-center justify-end gap-1 ${asset.change >= 0 ? 'text-[#00E676]' : 'text-[#FF5252]'}`}>
+                      <span className={`font-data text-sm flex items-center justify-end gap-1 ${asset.change >= 0 ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'}`}>
                         {asset.change >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                         {asset.change >= 0 ? '+' : ''}{asset.change}%
                       </span>
@@ -149,13 +149,13 @@ export default function PortfolioPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                          <div className="h-full rounded-full bg-[#6C5CE7]" style={{ width: `${asset.allocation}%` }} />
+                          <div className="h-full rounded-full bg-[var(--color-primary)]" style={{ width: `${asset.allocation}%` }} />
                         </div>
-                        <span className="font-data text-xs text-[#5A5A72]">{asset.allocation}%</span>
+                        <span className="font-data text-xs text-[var(--color-text-muted)]">{asset.allocation}%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button onClick={() => showToast(`Opening ${asset.symbol} details...`, 'info')} className="p-2 rounded-lg hover:bg-white/5 text-[#5A5A72] transition-colors">
+                      <button onClick={() => showToast(`Opening ${asset.symbol} details...`, 'info')} className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors">
                         <ChevronRight size={16} />
                       </button>
                     </td>
@@ -178,17 +178,17 @@ export default function PortfolioPage() {
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
                   <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    rec.action === 'BUY' ? 'bg-[#00E676]/10 text-[#00E676]' :
-                    rec.action === 'SELL' ? 'bg-[#FF5252]/10 text-[#FF5252]' :
-                    'bg-[#42A5F5]/10 text-[#42A5F5]'
+                    rec.action === 'BUY' ? 'bg-[var(--color-positive)]/10 text-[var(--color-positive)]' :
+                    rec.action === 'SELL' ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' :
+                    'bg-[var(--color-info)]/10 text-[var(--color-info)]'
                   }`}>
                     {rec.action} {rec.token}
                   </span>
-                  <span className="font-data text-xs text-[#5A5A72]">{rec.confidence}% confidence</span>
-                  <span className="font-data text-xs text-[#5A5A72]">ETA: {rec.timeframe}</span>
+                  <span className="font-data text-xs text-[var(--color-text-muted)]">{rec.confidence}% confidence</span>
+                  <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {rec.timeframe}</span>
                 </div>
               </div>
-              <p className="text-sm text-[#A0A0B8] leading-relaxed mb-4">{rec.reason}</p>
+              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">{rec.reason}</p>
               <div className="flex gap-3">
                 <button onClick={() => showToast(`${rec.action} order for ${rec.token} coming soon`, 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
                   Execute {rec.action}

@@ -4,8 +4,6 @@ import LiveTicker from '@/components/LiveTicker';
 import FeatureGrid from '@/components/FeatureGrid';
 import HowItWorks from '@/components/HowItWorks';
 import TerminalPreview from '@/components/TerminalPreview';
-import MetricsTestimonials from '@/components/MetricsTestimonials';
-import PricingSection from '@/components/PricingSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 
@@ -18,8 +16,6 @@ export default function Home() {
       <FeatureGrid />
       <HowItWorks />
       <TerminalPreview />
-      <MetricsTestimonials />
-      <PricingSection />
       <CTASection />
       <Footer />
     </main>

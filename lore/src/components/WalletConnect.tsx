@@ -149,7 +149,7 @@ export function WalletModal({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md rounded-2xl bg-[#12121A] border border-white/10 p-6 shadow-2xl"
+            className="relative w-full max-w-md rounded-2xl bg-[var(--color-bg-card)] border border-white/10 p-6 shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -158,7 +158,7 @@ export function WalletModal({
               </h3>
               <button
                 onClick={onClose}
-                className="p-2 rounded-lg hover:bg-white/5 text-[#5A5A72] hover:text-white transition-colors"
+                className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-white transition-colors"
               >
                 <X size={20} />
               </button>
@@ -171,24 +171,24 @@ export function WalletModal({
                   key={w.name}
                   onClick={() => onConnect(w.name)}
                   disabled={connecting}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-[#6C5CE7]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-[var(--color-primary)]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
                   <WalletLogo type={w.type} className="w-8 h-8 rounded-lg" />
                   <div className="text-left flex-1">
                     <div className="font-medium text-white">{w.name}</div>
-                    <div className="text-xs text-[#5A5A72]">{w.chain}</div>
+                    <div className="text-xs text-[var(--color-text-muted)]">{w.chain}</div>
                   </div>
                   {connecting ? (
-                    <div className="w-5 h-5 border-2 border-[#6C5CE7] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <ChevronRight size={18} className="text-[#5A5A72] group-hover:text-[#6C5CE7] transition-colors" />
+                    <ChevronRight size={18} className="text-[var(--color-text-muted)] group-hover:text-[var(--color-primary)] transition-colors" />
                   )}
                 </button>
               ))}
             </div>
 
             {/* Footer */}
-            <p className="mt-6 text-center text-xs text-[#5A5A72]">
+            <p className="mt-6 text-center text-xs text-[var(--color-text-muted)]">
               By connecting, you agree to our Terms of Service and Privacy Policy
             </p>
           </motion.div>
@@ -234,16 +234,16 @@ export function WalletButton({
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         className={variant === 'mobile'
-          ? 'w-full flex items-center justify-between p-3 rounded-xl border border-[#6C5CE7]/30 bg-[#6C5CE7]/5'
-          : 'flex items-center gap-3 px-4 py-2.5 rounded-xl border border-[#6C5CE7]/30 bg-[#6C5CE7]/5 hover:bg-[#6C5CE7]/10 transition-colors'}
+          ? 'w-full flex items-center justify-between p-3 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/5'
+          : 'flex items-center gap-3 px-4 py-2.5 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 transition-colors'}
       >
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[#00E676] animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-[var(--color-positive)] animate-pulse" />
           <span className="font-data text-sm text-white">
             {truncateAddress(wallet.address)}
           </span>
         </div>
-        <span className="font-data text-xs text-[#5A5A72]">{wallet.balance} ETH</span>
+        <span className="font-data text-xs text-[var(--color-text-muted)]">{wallet.balance} ETH</span>
       </button>
       {/* Dropdown */}
       <AnimatePresence>
@@ -252,30 +252,30 @@ export function WalletButton({
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-[#12121A] border border-white/10 shadow-2xl z-50 overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-[var(--color-bg-card)] border border-white/10 shadow-2xl z-50 overflow-hidden"
           >
             <div className="p-3 border-b border-white/5">
-              <div className="text-xs text-[#5A5A72] mb-1">Connected ({wallet.chain})</div>
+              <div className="text-xs text-[var(--color-text-muted)] mb-1">Connected ({wallet.chain})</div>
               <div className="font-data text-xs text-white break-all">{wallet.address}</div>
             </div>
             <div className="p-1">
               <button
                 onClick={() => { onCopyAddress(); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white transition-colors"
               >
-                {copied ? <Check size={14} className="text-[#00E676]" /> : <Copy size={14} />}
+                {copied ? <Check size={14} className="text-[var(--color-positive)]" /> : <Copy size={14} />}
                 {copied ? 'Copied!' : 'Copy Address'}
               </button>
               <button
                 onClick={() => window.open(`https://etherscan.io/address/${wallet.address}`, '_blank')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white transition-colors"
               >
                 <ExternalLink size={14} />
                 View on Explorer
               </button>
               <button
                 onClick={() => { onDisconnect(); setShowDropdown(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#FF5252] hover:bg-[#FF5252]/10 transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-negative)] hover:bg-[var(--color-negative)]/10 transition-colors"
               >
                 <X size={14} />
                 Disconnect

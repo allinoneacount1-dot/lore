@@ -59,12 +59,12 @@ const features = [
 ];
 
 const accentColors: Record<string, string> = {
-  violet: 'from-[#6C5CE7]/20 to-[#6C5CE7]/5 border-[#6C5CE7]/20 text-[#6C5CE7]',
-  red: 'from-[#FF5252]/20 to-[#FF5252]/5 border-[#FF5252]/20 text-[#FF5252]',
-  cyan: 'from-[#00D2FF]/20 to-[#00D2FF]/5 border-[#00D2FF]/20 text-[#00D2FF]',
-  blue: 'from-[#42A5F5]/20 to-[#42A5F5]/5 border-[#42A5F5]/20 text-[#42A5F5]',
+  violet: 'from-[var(--color-primary)]/20 to-[#6C5CE7]/5 border-[var(--color-primary)]/20 text-[var(--color-primary)]',
+  red: 'from-[#FF5252]/20 to-[#FF5252]/5 border-[#FF5252]/20 text-[var(--color-negative)]',
+  cyan: 'from-[#00D2FF]/20 to-[var(--color-secondary)]/5 border-[#00D2FF]/20 text-[var(--color-secondary)]',
+  blue: 'from-[#42A5F5]/20 to-[#42A5F5]/5 border-[#42A5F5]/20 text-[var(--color-info)]',
   gold: 'from-[#FDCB6E]/20 to-[#FDCB6E]/5 border-[#FDCB6E]/20 text-[#FDCB6E]',
-  green: 'from-[#00E676]/20 to-[#00E676]/5 border-[#00E676]/20 text-[#00E676]',
+  green: 'from-[#00E676]/20 to-[#00E676]/5 border-[var(--color-positive)]/20 text-[var(--color-positive)]',
 };
 
 export default function FeatureGrid() {
@@ -78,14 +78,14 @@ export default function FeatureGrid() {
           viewport={{ once: true }}
           className="mb-16"
         >
-          <span className="font-data text-xs tracking-[0.25em] uppercase text-[#6C5CE7]">
+          <span className="font-data text-xs tracking-[0.25em] uppercase text-[var(--color-primary)]">
             ◆ Intelligence Modules
           </span>
           <h2 className="text-h2 font-display text-white mt-4">
             Every signal.{' '}
             <span className="text-gradient">One narrative.</span>
           </h2>
-          <p className="mt-4 text-lg text-[#A0A0B8] max-w-2xl">
+          <p className="mt-4 text-lg text-[var(--color-text-secondary)] max-w-2xl">
             Six AI-powered modules working in concert. Each one specialist.
             Together, they see what no human analyst can.
           </p>
@@ -111,14 +111,14 @@ export default function FeatureGrid() {
                 <h3 className=" font-display font-semibold text-xl text-white mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-[#A0A0B8] text-sm leading-relaxed mb-5">
+                <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed mb-5">
                   {feature.description}
                 </p>
                 <div className="flex items-center justify-between">
                   <span className={`font-data text-xs ${colors.split(' ')[2]}`}>
                     {feature.stat}
                   </span>
-                  <ChevronRight size={16} className="text-[#5A5A72] group-hover:text-white group-hover:translate-x-1 transition-all" />
+                  <ChevronRight size={16} className="text-[var(--color-text-muted)] group-hover:text-white group-hover:translate-x-1 transition-all" />
                 </div>
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.05)_0%,transparent_70%)]" />

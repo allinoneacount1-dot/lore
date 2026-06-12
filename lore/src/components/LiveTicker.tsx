@@ -16,23 +16,23 @@ export default function LiveTicker() {
 
   const getColor = (type: string) => {
     switch (type) {
-      case 'positive': return 'text-[#00E676]';
-      case 'negative': return 'text-[#FF5252]';
-      case 'warning': return 'text-[#FFD93D]';
-      case 'info': return 'text-[#42A5F5]';
-      default: return 'text-[#A0A0B8]';
+      case 'positive': return 'text-[var(--color-positive)]';
+      case 'negative': return 'text-[var(--color-negative)]';
+      case 'warning': return 'text-[var(--color-warning)]';
+      case 'info': return 'text-[var(--color-info)]';
+      default: return 'text-[var(--color-text-secondary)]';
     }
   };
 
   return (
-    <div className="w-full h-12 bg-[#0D0D12]/50 border-y border-white/5 overflow-hidden flex items-center">
+    <div className="w-full h-12 bg-[var(--color-bg-surface)]/50 border-y border-white/5 overflow-hidden flex items-center">
       <div className="ticker-marquee whitespace-nowrap">
         {items.map((item, i) => (
           <span key={i} className="inline-flex items-center gap-6 mx-4">
             <span className={`font-data text-xs ${getColor(item.type)}`}>
               {item.text}
             </span>
-            <span className="text-[#5A5A72]">◆</span>
+            <span className="text-[var(--color-text-muted)]">◆</span>
           </span>
         ))}
       </div>

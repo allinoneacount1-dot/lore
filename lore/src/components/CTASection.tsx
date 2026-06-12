@@ -24,14 +24,14 @@ export default function CTASection() {
         <p className="mt-4 text-h3 font-display text-gradient-gold">
           Are you listening?
         </p>
-        <p className="mt-6 text-lg text-[#A0A0B8] max-w-xl mx-auto">
+        <p className="mt-6 text-lg text-[var(--color-text-secondary)] max-w-xl mx-auto">
           Join 2,847+ traders who see what others can&apos;t.
         </p>
         <button className="mt-10 btn-primary text-lg !px-12 !py-5 inline-flex items-center gap-3">
           Enter the Lore
           <ArrowRight size={20} />
         </button>
-        <p className="mt-4 text-xs text-[#5A5A72] font-data">
+        <p className="mt-4 text-xs text-[var(--color-text-muted)] font-data">
           No credit card required. Start in 30 seconds.
         </p>
       </motion.div>

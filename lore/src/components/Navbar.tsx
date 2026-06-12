@@ -37,7 +37,7 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#070708]/80 backdrop-blur-xl border-b border-white/5'
+            ? 'bg-[var(--color-bg-primary)]/80 backdrop-blur-xl border-b border-white/5'
             : 'bg-transparent'
         }`}
       >
@@ -52,7 +52,7 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-[#A0A0B8] hover:text-white transition-colors"
+                className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-white transition-colors"
               >
                 {link.label}
               </Link>
@@ -62,7 +62,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="live-dot" />
-              <span className="font-data text-xs text-[#5A5A72]">LIVE</span>
+              <span className="font-data text-xs text-[var(--color-text-muted)]">LIVE</span>
             </div>
             <WalletButton
               wallet={wallet}
@@ -89,7 +89,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-[#070708]/95 backdrop-blur-xl pt-20"
+            className="fixed inset-0 z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-xl pt-20"
           >
             <div className="flex flex-col items-center gap-8 pt-12">
               {navLinks.map((link) => (
@@ -97,7 +97,7 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-display font-semibold text-white hover:text-[#6C5CE7] transition-colors"
+                  className="text-2xl font-display font-semibold text-white hover:text-[var(--color-primary)] transition-colors"
                 >
                   {link.label}
                 </Link>

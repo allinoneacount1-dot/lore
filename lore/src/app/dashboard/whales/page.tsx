@@ -83,7 +83,7 @@ export default function WhaleRadarPage() {
       {/* Header */}
       <div>
         <h1 className="text-h2 font-display text-white">Whale Radar</h1>
-        <p className="text-sm text-[#5A5A72] mt-1">
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">
           Track 12,847 smart money wallets in real-time
         </p>
       </div>
@@ -91,16 +91,16 @@ export default function WhaleRadarPage() {
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Tracked', value: '12,847', icon: Eye, color: 'text-[#00D2FF]' },
-          { label: 'Active (24h)', value: '3,421', icon: Activity, color: 'text-[#00E676]' },
-          { label: 'Net Inflow', value: '+$247M', icon: TrendingUp, color: 'text-[#00E676]' },
-          { label: 'Net Outflow', value: '-$89M', icon: TrendingDown, color: 'text-[#FF5252]' },
+          { label: 'Total Tracked', value: '12,847', icon: Eye, color: 'text-[var(--color-secondary)]' },
+          { label: 'Active (24h)', value: '3,421', icon: Activity, color: 'text-[var(--color-positive)]' },
+          { label: 'Net Inflow', value: '+$247M', icon: TrendingUp, color: 'text-[var(--color-positive)]' },
+          { label: 'Net Outflow', value: '-$89M', icon: TrendingDown, color: 'text-[var(--color-negative)]' },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
             <div key={stat.label} className="card-glass rounded-2xl p-5">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-[#5A5A72] font-data">{stat.label}</span>
+                <span className="text-xs text-[var(--color-text-muted)] font-data">{stat.label}</span>
                 <Icon size={16} className={stat.color} />
               </div>
               <div className="text-2xl font-display font-bold text-white">{stat.value}</div>
@@ -116,7 +116,7 @@ export default function WhaleRadarPage() {
             <h2 className="font-display font-semibold text-lg text-white">Whale Leaderboard</h2>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
-                <Filter size={14} className="text-[#5A5A72]" />
+                <Filter size={14} className="text-[var(--color-text-muted)]" />
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
@@ -141,39 +141,39 @@ export default function WhaleRadarPage() {
                 className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group"
               >
                 <div className="w-8 text-center">
-                  <span className="text-sm font-data text-[#5A5A72]">#{whale.rank}</span>
+                  <span className="text-sm font-data text-[var(--color-text-muted)]">#{whale.rank}</span>
                 </div>
 
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#6C5CE7]/30 to-[#00D2FF]/30 flex items-center justify-center text-xs font-bold text-white">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)]/30 to-[var(--color-secondary)]/30 flex items-center justify-center text-xs font-bold text-white">
                   {whale.avatar}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-white group-hover:text-[#6C5CE7] transition-colors">
+                    <span className="text-sm font-medium text-white group-hover:text-[var(--color-primary)] transition-colors">
                       {whale.name}
                     </span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                      whale.risk === 'low' ? 'bg-[#00E676]/10 text-[#00E676]' :
-                      whale.risk === 'medium' ? 'bg-[#FFD93D]/10 text-[#FFD93D]' :
-                      'bg-[#FF5252]/10 text-[#FF5252]'
+                      whale.risk === 'low' ? 'bg-[var(--color-positive)]/10 text-[var(--color-positive)]' :
+                      whale.risk === 'medium' ? 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]' :
+                      'bg-[var(--color-negative)]/10 text-[var(--color-negative)]'
                     }`}>
                       {whale.risk}
                     </span>
                   </div>
-                  <div className="text-[10px] text-[#5A5A72] font-data">{whale.address} • {whale.tokens} tokens</div>
+                  <div className="text-[10px] text-[var(--color-text-muted)] font-data">{whale.address} • {whale.tokens} tokens</div>
                 </div>
 
                 <div className="text-right hidden sm:block">
                   <div className="text-sm text-white font-data">{whale.value}</div>
-                  <div className={`text-[10px] font-data ${whale.change24h.startsWith('+') ? 'text-[#00E676]' : 'text-[#FF5252]'}`}>
+                  <div className={`text-[10px] font-data ${whale.change24h.startsWith('+') ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'}`}>
                     {whale.change24h} (24h)
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-[#5A5A72] font-data">{whale.followers} 👥</span>
-                  <ChevronRight size={16} className="text-[#5A5A72] group-hover:text-white transition-colors" />
+                  <span className="text-[10px] text-[var(--color-text-muted)] font-data">{whale.followers} 👥</span>
+                  <ChevronRight size={16} className="text-[var(--color-text-muted)] group-hover:text-white transition-colors" />
                 </div>
               </motion.div>
             ))}
@@ -184,7 +184,7 @@ export default function WhaleRadarPage() {
         <div className="card-glass rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display font-semibold text-lg text-white">Recent Movements</h2>
-            <span className="text-xs text-[#5A5A72] font-data">Live</span>
+            <span className="text-xs text-[var(--color-text-muted)] font-data">Live</span>
           </div>
 
           <div className="space-y-3">
@@ -197,29 +197,29 @@ export default function WhaleRadarPage() {
                 className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-data text-[#6C5CE7]">{movement.wallet}</span>
-                  <span className="text-[10px] text-[#5A5A72] font-data flex items-center gap-1">
+                  <span className="text-xs font-data text-[var(--color-primary)]">{movement.wallet}</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] font-data flex items-center gap-1">
                     <Clock size={8} />
                     {movement.time}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
-                    movement.action === 'Bought' ? 'bg-[#00E676]/10 text-[#00E676]' :
-                    movement.action === 'Sold' ? 'bg-[#FF5252]/10 text-[#FF5252]' :
-                    'bg-[#42A5F5]/10 text-[#42A5F5]'
+                    movement.action === 'Bought' ? 'bg-[var(--color-positive)]/10 text-[var(--color-positive)]' :
+                    movement.action === 'Sold' ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' :
+                    'bg-[var(--color-info)]/10 text-[var(--color-info)]'
                   }`}>
                     {movement.action}
                   </span>
                   <span className="text-xs text-white">{movement.token}</span>
                 </div>
-                <div className="text-xs text-[#A0A0B8] mt-1">{movement.amount}</div>
+                <div className="text-xs text-[var(--color-text-secondary)] mt-1">{movement.amount}</div>
               </motion.div>
             ))}
           </div>
 
           {/* Add Wallet */}
-          <button onClick={() => showToast('Track wallet modal coming soon', 'info')} className="w-full mt-4 py-3 rounded-xl border border-dashed border-white/10 text-sm text-[#5A5A72] hover:text-white hover:border-[#6C5CE7]/30 transition-all flex items-center justify-center gap-2">
+          <button onClick={() => showToast('Track wallet modal coming soon', 'info')} className="w-full mt-4 py-3 rounded-xl border border-dashed border-white/10 text-sm text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-primary)]/30 transition-all flex items-center justify-center gap-2">
             <Plus size={16} />
             Track New Wallet
           </button>

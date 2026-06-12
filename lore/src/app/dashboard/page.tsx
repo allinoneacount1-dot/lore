@@ -121,14 +121,14 @@ export default function OverviewPage() {
       <motion.div variants={item} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-h2 font-display text-white">Overview</h1>
-          <p className="text-sm text-[#5A5A72] mt-1">
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">
             Real-time intelligence dashboard • Last scan: {currentTime || '—'}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00E676]/10 border border-[#00E676]/20">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-positive)]/10 border border-[var(--color-positive)]/20">
             <span className="live-dot" />
-            <span className="text-xs text-[#00E676] font-data">LIVE</span>
+            <span className="text-xs text-[var(--color-positive)] font-data">LIVE</span>
           </div>
           <select className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white outline-none">
             <option>Last 24h</option>
@@ -142,10 +142,10 @@ export default function OverviewPage() {
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {marketStats.map((stat) => (
           <div key={stat.label} className="card-glass rounded-2xl p-5">
-            <div className="text-xs text-[#5A5A72] font-data mb-2">{stat.label}</div>
+            <div className="text-xs text-[var(--color-text-muted)] font-data mb-2">{stat.label}</div>
             <div className="text-2xl font-display font-bold text-white">{stat.value}</div>
             <div className={`flex items-center gap-1 mt-1 text-xs font-data ${
-              stat.positive ? 'text-[#00E676]' : 'text-[#FF5252]'
+              stat.positive ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'
             }`}>
               {stat.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
               {stat.change}
@@ -160,26 +160,26 @@ export default function OverviewPage() {
         <motion.div variants={item} className="lg:col-span-2 card-glass rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
-              <Zap size={18} className="text-[#6C5CE7]" />
+              <Zap size={18} className="text-[var(--color-primary)]" />
               Live Intelligence Feed
             </h2>
-            <span className="text-xs text-[#5A5A72] font-data">5 new alerts</span>
+            <span className="text-xs text-[var(--color-text-muted)] font-data">5 new alerts</span>
           </div>
 
           <div className="space-y-3">
             {liveAlerts.map((alert, i) => {
               const Icon = alert.icon;
               const severityColors: Record<string, string> = {
-                critical: 'border-[#FF5252]/30 bg-[#FF5252]/5',
-                high: 'border-[#FFD93D]/30 bg-[#FFD93D]/5',
+                critical: 'border-[#FF5252]/30 bg-[var(--color-negative)]/5',
+                high: 'border-[#FFD93D]/30 bg-[var(--color-warning)]/5',
                 medium: 'border-[#42A5F5]/30 bg-[#42A5F5]/5',
-                low: 'border-[#00E676]/30 bg-[#00E676]/5',
+                low: 'border-[#00E676]/30 bg-[var(--color-positive)]/5',
               };
               const iconColors: Record<string, string> = {
-                critical: 'text-[#FF5252]',
-                high: 'text-[#FFD93D]',
-                medium: 'text-[#42A5F5]',
-                low: 'text-[#00E676]',
+                critical: 'text-[var(--color-negative)]',
+                high: 'text-[var(--color-warning)]',
+                medium: 'text-[var(--color-info)]',
+                low: 'text-[var(--color-positive)]',
               };
 
               return (
@@ -196,12 +196,12 @@ export default function OverviewPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-white">{alert.title}</span>
-                      <span className="text-[10px] text-[#5A5A72] font-data flex items-center gap-1">
+                      <span className="text-[10px] text-[var(--color-text-muted)] font-data flex items-center gap-1">
                         <Clock size={10} />
                         {alert.time}
                       </span>
                     </div>
-                    <p className="text-xs text-[#A0A0B8] mt-1 line-clamp-2">{alert.description}</p>
+                    <p className="text-xs text-[var(--color-text-secondary)] mt-1 line-clamp-2">{alert.description}</p>
                   </div>
                 </motion.div>
               );
@@ -213,27 +213,27 @@ export default function OverviewPage() {
         <motion.div variants={item} className="card-glass rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
-              <Eye size={18} className="text-[#00D2FF]" />
+              <Eye size={18} className="text-[var(--color-secondary)]" />
               Top Wallets
             </h2>
-            <button onClick={() => showToast('Opening Whale Radar...', 'info')} className="text-xs text-[#6C5CE7] hover:underline">View all</button>
+            <button onClick={() => showToast('Opening Whale Radar...', 'info')} className="text-xs text-[var(--color-primary)] hover:underline">View all</button>
           </div>
 
           <div className="space-y-3">
             {topWallets.map((wallet, i) => (
               <div key={wallet.address} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6C5CE7]/30 to-[#00D2FF]/30 flex items-center justify-center text-xs font-data text-white">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)]/30 to-[var(--color-secondary)]/30 flex items-center justify-center text-xs font-data text-white">
                     {i + 1}
                   </div>
                   <div>
                     <div className="text-sm text-white font-medium">{wallet.label}</div>
-                    <div className="text-[10px] text-[#5A5A72] font-data">{wallet.address}</div>
+                    <div className="text-[10px] text-[var(--color-text-muted)] font-data">{wallet.address}</div>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-white font-data">{wallet.value}</div>
-                  <div className={`text-[10px] font-data ${wallet.positive ? 'text-[#00E676]' : 'text-[#FF5252]'}`}>
+                  <div className={`text-[10px] font-data ${wallet.positive ? 'text-[var(--color-positive)]' : 'text-[var(--color-negative)]'}`}>
                     {wallet.change}
                   </div>
                 </div>
@@ -247,34 +247,34 @@ export default function OverviewPage() {
       <motion.div variants={item} className="card-glass rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
-            <Activity size={18} className="text-[#FDCB6E]" />
+            <Activity size={18} className="text-[var(--color-tertiary)]" />
             AI-Generated Narratives
           </h2>
-          <button onClick={() => showToast('Opening Narratives page...', 'info')} className="text-xs text-[#6C5CE7] hover:underline">View all narratives</button>
+          <button onClick={() => showToast('Opening Narratives page...', 'info')} className="text-xs text-[var(--color-primary)] hover:underline">View all narratives</button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {narratives.map((narrative, i) => (
-            <div key={i} className="p-5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#6C5CE7]/20 transition-all cursor-pointer group">
+            <div key={i} className="p-5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[var(--color-primary)]/20 transition-all cursor-pointer group">
               <div className="flex items-center justify-between mb-3">
                 <span className={`text-[10px] font-data px-2 py-0.5 rounded-full ${
                   narrative.sentiment === 'bullish'
-                    ? 'bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/20'
-                    : 'bg-[#FF5252]/10 text-[#FF5252] border border-[#FF5252]/20'
+                    ? 'bg-[var(--color-positive)]/10 text-[var(--color-positive)] border border-[var(--color-positive)]/20'
+                    : 'bg-[var(--color-negative)]/10 text-[var(--color-negative)] border border-[#FF5252]/20'
                 }`}>
                   {narrative.sentiment === 'bullish' ? '↑ BULLISH' : '↓ BEARISH'}
                 </span>
-                <span className="text-[10px] text-[#5A5A72] font-data">{narrative.confidence}% confidence</span>
+                <span className="text-[10px] text-[var(--color-text-muted)] font-data">{narrative.confidence}% confidence</span>
               </div>
-              <h3 className="text-sm font-semibold text-white mb-2 group-hover:text-[#6C5CE7] transition-colors">
+              <h3 className="text-sm font-semibold text-white mb-2 group-hover:text-[var(--color-primary)] transition-colors">
                 {narrative.title}
               </h3>
-              <p className="text-xs text-[#A0A0B8] leading-relaxed line-clamp-3 mb-3">
+              <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed line-clamp-3 mb-3">
                 {narrative.summary}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {narrative.tokens.map((token) => (
-                  <span key={token} className="text-[10px] font-data px-2 py-0.5 rounded-full bg-white/5 text-[#A0A0B8]">
+                  <span key={token} className="text-[10px] font-data px-2 py-0.5 rounded-full bg-white/5 text-[var(--color-text-secondary)]">
                     {token}
                   </span>
                 ))}
@@ -287,22 +287,22 @@ export default function OverviewPage() {
       {/* Quick Actions */}
       <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { icon: Eye, label: 'Track Wallet', desc: 'Add wallet to radar', color: 'text-[#00D2FF]' },
-          { icon: Shield, label: 'Scan Protocol', desc: 'Check for exploits', color: 'text-[#FF5252]' },
-          { icon: Activity, label: 'New Narrative', desc: 'Generate AI report', color: 'text-[#FDCB6E]' },
-          { icon: Zap, label: 'Set Alert', desc: 'Custom notification', color: 'text-[#6C5CE7]' },
+          { icon: Eye, label: 'Track Wallet', desc: 'Add wallet to radar', color: 'text-[var(--color-secondary)]' },
+          { icon: Shield, label: 'Scan Protocol', desc: 'Check for exploits', color: 'text-[var(--color-negative)]' },
+          { icon: Activity, label: 'New Narrative', desc: 'Generate AI report', color: 'text-[var(--color-tertiary)]' },
+          { icon: Zap, label: 'Set Alert', desc: 'Custom notification', color: 'text-[var(--color-primary)]' },
         ].map((action) => {
           const Icon = action.icon;
           return (
             <button
               key={action.label}
-              className="card-glass rounded-2xl p-5 text-left hover:border-[#6C5CE7]/20 transition-all group"
+              className="card-glass rounded-2xl p-5 text-left hover:border-[var(--color-primary)]/20 transition-all group"
             >
               <Icon size={20} className={`${action.color} mb-3`} />
-              <div className="text-sm font-medium text-white group-hover:text-[#6C5CE7] transition-colors">
+              <div className="text-sm font-medium text-white group-hover:text-[var(--color-primary)] transition-colors">
                 {action.label}
               </div>
-              <div className="text-[10px] text-[#5A5A72] mt-1">{action.desc}</div>
+              <div className="text-[10px] text-[var(--color-text-muted)] mt-1">{action.desc}</div>
             </button>
           );
         })}
