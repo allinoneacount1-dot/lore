@@ -4,23 +4,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, X, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { useWalletContext } from '@/components/WalletProvider';
 import { LoreLogo } from '@/components/LoreLogo';
 
 const walletOptions = [
-  { id: 'phantom', name: 'Phantom', chain: 'Solana', icon: '👻', color: 'from-purple-500/20 to-indigo-500/20' },
-  { id: 'metamask', name: 'MetaMask', chain: 'Ethereum', icon: '🦊', color: 'from-orange-500/20 to-amber-500/20' },
-  { id: 'walletconnect', name: 'WalletConnect', chain: 'Multi-chain', icon: '🔗', color: 'from-blue-500/20 to-cyan-500/20' },
+  { id: 'phantom', name: 'Phantom', chain: 'Solana', icon: '👻' },
+  { id: 'metamask', name: 'MetaMask', chain: 'Ethereum', icon: '🦊' },
+  { id: 'walletconnect', name: 'WalletConnect', chain: 'Multi-chain', icon: '🔗' },
 ];
 
 export default function LoginPage() {
   const { user, loading: authLoading, signInWithGoogle } = useAuth();
-  const { wallet, connect, connecting, showModal, setShowModal, openModal } = useWalletContext();
+  const { wallet, connect, connecting } = useWalletContext();
   const router = useRouter();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -35,7 +40,7 @@ export default function LoginPage() {
     setSelectedWallet(null);
   };
 
-  if (authLoading) {
+  if (!mounted || authLoading) {
     return (
       <div className="min-h-screen bg-[#070708] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[var(--color-primary)]/30 border-t-[var(--color-primary)] rounded-full animate-spin" />
@@ -69,7 +74,7 @@ export default function LoginPage() {
             onClick={signInWithGoogle}
             className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-white/[0.05] border border-white/10 text-white font-medium hover:bg-white/[0.08] hover:border-white/20 transition-all group"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -134,44 +139,6 @@ export default function LoginPage() {
             Sign up free
           </Link>
         </p>
-
-        {/* Wallet Modal */}
-        <AnimatePresence>
-          {showModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="relative bg-[#111111] border border-white/10 rounded-2xl p-6 w-full max-w-sm"
-              >
-                <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-white">
-                  <X size={18} />
-                </button>
-                <h2 className="text-lg font-display font-bold text-white mb-4">Connect Wallet</h2>
-                <div className="space-y-2">
-                  {walletOptions.map((w) => (
-                    <button
-                      key={w.id}
-                      onClick={() => handleWalletConnect(w.id)}
-                      disabled={connecting}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all"
-                    >
-                      <span className="text-lg">{w.icon}</span>
-                      <span className="text-sm text-white">{w.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </div>
   );
