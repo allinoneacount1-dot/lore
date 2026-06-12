@@ -1,12 +1,14 @@
+// src/components/Navbar.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { LoreLogo } from './LoreLogo';
 import { useWalletContext } from './WalletProvider';
 import { WalletModal, WalletButton } from './WalletConnect';
+import { useAuth } from './AuthProvider';
 
 const navLinks = [
   { label: 'Intelligence', href: '#intelligence' },
@@ -18,7 +20,9 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const { wallet, connecting, showModal, setShowModal, openModal, connect, disconnect, copied, copyAddress } = useWalletContext();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -28,6 +32,11 @@ export default function Navbar() {
 
   const handleConnect = async (walletName: string) => {
     await connect(walletName);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setShowUserMenu(false);
   };
 
   return (
@@ -65,13 +74,80 @@ export default function Navbar() {
               <div className="live-dot" />
               <span className="font-data text-xs text-[var(--color-text-muted)]">LIVE</span>
             </div>
-            <WalletButton
-              wallet={wallet}
-              onOpenModal={openModal}
-              onDisconnect={disconnect}
-              onCopyAddress={copyAddress}
-              copied={copied}
-            />
+
+            {/* Auth: Show user avatar or connect buttons */}
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-all"
+                >
+                  {user.user_metadata?.avatar_url ? (
+                    <img
+                      src={user.user_metadata.avatar_url}
+                      alt="Avatar"
+                      className="w-6 h-6 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
+                      <User size={12} className="text-[var(--color-primary)]" />
+                    </div>
+                  )}
+                  <span className="text-xs text-white font-data max-w-[100px] truncate">
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </button>
+
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-[#111111] border border-white/10 shadow-2xl z-50 overflow-hidden"
+                    >
+                      <div className="p-3 border-b border-white/5">
+                        <div className="text-xs text-[var(--color-text-muted)]">Signed in as</div>
+                        <div className="text-sm text-white font-data truncate">{user.email}</div>
+                      </div>
+                      <div className="p-1">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                          <User size={14} />
+                          Dashboard
+                        </Link>
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-negative)] hover:bg-[var(--color-negative)]/10 transition-colors"
+                        >
+                          <LogOut size={14} />
+                          Sign Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors font-medium"
+                >
+                  Sign In
+                </Link>
+                <WalletButton
+                  wallet={wallet}
+                  onOpenModal={openModal}
+                  onDisconnect={disconnect}
+                  onCopyAddress={copyAddress}
+                  copied={copied}
+                />
+              </>
+            )}
           </div>
 
           <button
@@ -103,14 +179,38 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <WalletButton
-                wallet={wallet}
-                onOpenModal={() => { setShowModal(true); setMobileOpen(false); }}
-                onDisconnect={disconnect}
-                onCopyAddress={copyAddress}
-                copied={copied}
-                variant="mobile"
-              />
+              {user ? (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <User size={16} className="text-[var(--color-primary)]" />
+                    <span className="text-sm text-white">{user.email}</span>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="btn-secondary text-sm"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="btn-secondary text-sm"
+                  >
+                    Sign In
+                  </Link>
+                  <WalletButton
+                    wallet={wallet}
+                    onOpenModal={() => { setShowModal(true); setMobileOpen(false); }}
+                    onDisconnect={disconnect}
+                    onCopyAddress={copyAddress}
+                    copied={copied}
+                    variant="mobile"
+                  />
+                </>
+              )}
             </div>
           </motion.div>
         )}

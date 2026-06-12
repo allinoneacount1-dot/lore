@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { ToastProvider } from '@/components/Toast';
 import { WalletProvider } from '@/components/WalletProvider';
+import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'LORE — The Intelligence Layer for Crypto Markets',
@@ -19,14 +20,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-[#070708] text-[#F5F5FA] font-body antialiased">
         <ToastProvider>
-          <WalletProvider>
-            <div className="noise-bg" />
-            <div className="grid-bg" />
-            <div className="scanline" />
-            <div className="relative z-10">
-              {children}
-            </div>
-          </WalletProvider>
+          <AuthProvider>
+            <WalletProvider>
+              <div className="noise-bg" />
+              <div className="grid-bg" />
+              <div className="scanline" />
+              <div className="relative z-10">
+                {children}
+              </div>
+            </WalletProvider>
+          </AuthProvider>
         </ToastProvider>
       </body>
     </html>

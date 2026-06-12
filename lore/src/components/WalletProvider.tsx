@@ -1,3 +1,4 @@
+// src/components/WalletProvider.tsx
 'use client';
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
@@ -22,6 +23,7 @@ interface WalletContextType {
   openModal: () => void;
   copied: boolean;
   copyAddress: () => void;
+  refreshBalance: () => Promise<void>;
 }
 
 const defaultWallet: WalletState = {
@@ -42,6 +44,7 @@ const WalletContext = createContext<WalletContextType>({
   openModal: () => {},
   copied: false,
   copyAddress: () => {},
+  refreshBalance: async () => {},
 });
 
 export function useWalletContext() {
@@ -61,11 +64,76 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(savedWallet);
         setWallet(parsed);
+        // Reconnect to wallet silently if possible
+        // @ts-ignore
+        if (window.solana?.isPhantom && parsed.walletType === 'Phantom') {
+          // @ts-ignore
+          window.solana.connect({ onlyIfTrusted: true }).then((resp: { publicKey: { toString: () => string } }) => {
+            setWallet(prev => ({ ...prev, connected: true, address: resp.publicKey.toString() }));
+          }).catch(() => {});
+        }
       } catch {
         localStorage.removeItem('lore_wallet');
       }
     }
   }, []);
+
+  const fetchSolanaBalance = async (address: string): Promise<string> => {
+    try {
+      const HELIUS_KEY = 'c4f2eedf-0b2c-481c-9835-128e0032510c';
+      const rpcUrl = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+      const res = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getBalance',
+          params: [address],
+        }),
+      });
+      const data = await res.json();
+      if (data.result?.value) {
+        return (data.result.value / 1e9).toFixed(4);
+      }
+      return '0.0000';
+    } catch {
+      return '0.0000';
+    }
+  };
+
+  const fetchEthBalance = async (address: string): Promise<string> => {
+    try {
+      // @ts-ignore
+      if (typeof window.ethereum !== 'undefined') {
+        // @ts-ignore
+        const balance = await window.ethereum.request({
+          method: 'eth_getBalance',
+          params: [address, 'latest'],
+        });
+        return (parseInt(balance, 16) / 1e18).toFixed(4);
+      }
+      return '0.0000';
+    } catch {
+      return '0.0000';
+    }
+  };
+
+  const refreshBalance = useCallback(async () => {
+    if (!wallet.connected || !wallet.address) return;
+
+    try {
+      if (wallet.walletType === 'Phantom' || wallet.chain === 'Solana') {
+        const bal = await fetchSolanaBalance(wallet.address);
+        setWallet(prev => ({ ...prev, balance: bal }));
+      } else {
+        const bal = await fetchEthBalance(wallet.address);
+        setWallet(prev => ({ ...prev, balance: bal }));
+      }
+    } catch {
+      // Keep existing balance on error
+    }
+  }, [wallet.connected, wallet.address, wallet.walletType, wallet.chain]);
 
   const connect = useCallback(async (walletType: string) => {
     setConnecting(true);
@@ -77,20 +145,23 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         if (provider?.isPhantom) {
           const resp = await provider.connect();
           const address = resp.publicKey.toString();
-          const balance = '0.00'; // Would need to fetch from RPC
+          // Fetch real SOL balance
+          const balance = await fetchSolanaBalance(address);
 
           const newWallet: WalletState = {
             connected: true,
             address,
             balance,
             chain: 'Solana',
-            walletType: 'phantom',
+            walletType: 'Phantom',
           };
           setWallet(newWallet);
           localStorage.setItem('lore_wallet', JSON.stringify(newWallet));
         } else {
-          // Phantom not installed — fall back to mock
-          await mockConnect(walletType);
+          // Phantom not installed — open download page
+          window.open('https://phantom.app/download', '_blank');
+          setConnecting(false);
+          return;
         }
       } else if (walletType === 'metamask') {
         // @ts-ignore
@@ -100,33 +171,32 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             method: 'eth_requestAccounts',
           });
           const address = accounts[0];
-          // @ts-ignore
-          const balance = await window.ethereum.request({
-            method: 'eth_getBalance',
-            params: [address, 'latest'],
-          });
-          const ethBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+          // Fetch real ETH balance
+          const balance = await fetchEthBalance(address);
 
           const newWallet: WalletState = {
             connected: true,
             address,
-            balance: ethBalance,
+            balance,
             chain: 'Ethereum',
-            walletType: 'metamask',
+            walletType: 'MetaMask',
           };
           setWallet(newWallet);
           localStorage.setItem('lore_wallet', JSON.stringify(newWallet));
         } else {
-          await mockConnect(walletType);
+          // MetaMask not installed
+          window.open('https://metamask.io/download/', '_blank');
+          setConnecting(false);
+          return;
         }
+      } else if (walletType === 'walletconnect') {
+        // WalletConnect v2 — use mock for now (requires @walletconnect/web3-provider)
+        await mockConnect(walletType);
       } else {
-        // WalletConnect or fallback
         await mockConnect(walletType);
       }
     } catch (err) {
       console.error('Wallet connection failed:', err);
-      // Fall back to mock
-      await mockConnect(walletType);
     }
 
     setConnecting(false);
@@ -134,7 +204,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const mockConnect = async (walletType: string) => {
-    // Simulate connection delay
     await new Promise((r) => setTimeout(r, 1500));
 
     const addr = '0x' + Array.from({ length: 40 }, () =>
@@ -167,12 +236,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const disconnect = useCallback(() => {
     setWallet(defaultWallet);
     localStorage.removeItem('lore_wallet');
-    // Try to disconnect from actual wallet too
     try {
       // @ts-ignore
       if (window.solana?.isPhantom) {
         // @ts-ignore
-        window.solana.disconnect();
+        window.solana.disconnect().catch(() => {});
       }
     } catch {
       // Ignore
@@ -201,6 +269,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         openModal,
         copied,
         copyAddress,
+        refreshBalance,
       }}
     >
       {children}
