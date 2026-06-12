@@ -170,3 +170,85 @@
   animation: marquee 30s linear infinite;
   will-change: transform;
 }
+
+/* ─── Dashboard density utilities ─── */
+@utility dash-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+@utility dash-label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@utility dash-value {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+@utility dash-sub {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+@utility price-up {
+  color: var(--color-positive);
+}
+
+@utility price-down {
+  color: var(--color-negative);
+}
+
+/* ─── Skeleton shimmer ─── */
+@utility skeleton {
+  background: linear-gradient(90deg, var(--color-bg-card) 25%, var(--color-bg-hover) 50%, var(--color-bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ─── Micro-interactions ─── */
+@utility hover-lift {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+}
+
+@utility flash-green {
+  animation: flashGreen 600ms ease-out;
+}
+
+@utility flash-red {
+  animation: flashRed 600ms ease-out;
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes flashGreen {
+  0% { background-color: rgba(0,230,118,0.3); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flashRed {
+  0% { background-color: rgba(255,82,82,0.3); }
+  100% { background-color: transparent; }
+}

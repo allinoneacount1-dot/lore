@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell, LayoutDashboard, Menu, Radio, Search,
   Settings, Shield, Wallet, X,
-  FileText, Smile, Briefcase, ChevronLeft, ChevronRight
+  FileText, Smile, Briefcase, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useWalletContext } from '@/components/WalletProvider';
 import { WalletModal, WalletButton } from '@/components/WalletConnect';
@@ -23,8 +22,180 @@ const sidebarLinks = [
   { icon: Briefcase, label: 'Portfolio', href: '/dashboard/portfolio' },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+/* ─── Dashboard Page Helpers ─── */
+export function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`skeleton ${className}`} />;
+}
+
+export function SkeletonCard() {
+  return (
+    <div className="dash-card space-y-3">
+      <Skeleton className="h-3 w-24" />
+      <Skeleton className="h-7 w-32" />
+      <Skeleton className="h-3 w-16" />
+    </div>
+  );
+}
+
+export function SkeletonTable({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-12 w-full" />
+      ))}
+    </div>
+  );
+}
+
+export function StatCard({
+  label,
+  value,
+  change,
+  icon: Icon,
+  color = 'text-[var(--color-primary)]',
+  loading = false,
+}: {
+  label: string;
+  value: string;
+  change?: string;
+  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  color?: string;
+  loading?: boolean;
+}) {
+  return (
+    <div className="dash-card hover-lift">
+      <div className="flex items-center justify-between mb-2">
+        <span className="dash-label">{label}</span>
+        {Icon && <Icon size={14} className={color} />}
+      </div>
+      {loading ? (
+        <Skeleton className="h-7 w-28" />
+      ) : (
+        <>
+          <div className="dash-value">{value}</div>
+          {change && (
+            <div className={`dash-sub mt-1 ${change.startsWith('+') ? 'price-up' : change.startsWith('-') ? 'price-down' : ''}`}>
+              {change}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export function SectionHeader({
+  title,
+  subtitle,
+  action,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <div>
+        <h2 className="font-display font-semibold text-lg text-white">{title}</h2>
+        {subtitle && <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{subtitle}</p>}
+      </div>
+      {action}
+    </div>
+  );
+}
+
+export function EmptyState({
+  icon: Icon = Search,
+  title = 'No data found',
+  description = 'Try adjusting your filters or search query.',
+}: {
+  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <div className="text-center py-16">
+      <Icon size={40} className="mx-auto text-[var(--color-text-muted)] mb-3" />
+      <h3 className="font-display font-semibold text-white mb-1">{title}</h3>
+      <p className="text-sm text-[var(--color-text-muted)]">{description}</p>
+    </div>
+  );
+}
+
+export function ErrorFallback({
+  message = 'Something went wrong',
+  onRetry,
+}: {
+  message?: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <div className="text-center py-12">
+      <div className="w-12 h-12 rounded-xl bg-[var(--color-negative)]/10 flex items-center justify-center mx-auto mb-3">
+        <Shield size={24} className="text-[var(--color-negative)]" />
+      </div>
+      <h3 className="font-display font-semibold text-white mb-1">{message}</h3>
+      <p className="text-sm text-[var(--color-text-muted)] mb-4">Please try again or contact support.</p>
+      {onRetry && (
+        <button onClick={onRetry} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
+          Retry
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function LiveClock() {
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    const update = () => setTime(new Date().toLocaleTimeString('en-US', { hour12: false }));
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return <span className="font-data text-xs text-[var(--color-text-muted)]">{time || '—'}</span>;
+}
+
+export function DashboardPage({
+  children,
+  title,
+  subtitle,
+  actions,
+  loading = false,
+}: {
+  children: ReactNode;
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  loading?: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          {loading ? (
+            <Skeleton className="h-8 w-48 mb-2" />
+          ) : (
+            <h1 className="text-h2 font-display text-white">{title}</h1>
+          )}
+          {subtitle && !loading && (
+            <p className="text-sm text-[var(--color-text-muted)] mt-1">{subtitle}</p>
+          )}
+        </div>
+        {actions && <div className="flex items-center gap-3">{actions}</div>}
+      </div>
+      {children}
+    </motion.div>
+  );
+}
+
+/* ─── Main Layout ─── */
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { showToast } = useToast();
@@ -36,10 +207,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <motion.aside
         initial={false}
         animate={{ width: sidebarCollapsed ? 72 : 260 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         className="hidden lg:flex flex-col bg-[var(--color-bg-surface)] border-r border-white/5 relative flex-shrink-0"
       >
-        {/* Logo */}
         <div className="p-5 flex items-center justify-between border-b border-white/5 overflow-hidden">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <LoreLogo className="w-8 h-8 flex-shrink-0" />
@@ -50,23 +220,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="p-1.5 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-white transition-colors flex-shrink-0"
+            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
 
-        {/* Nav Links */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Dashboard navigation">
           {sidebarLinks.map((link) => {
             const Icon = link.icon;
-            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.label}
                 href={link.href}
                 title={sidebarCollapsed ? link.label : undefined}
                 className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${
-                  isActive
+                  false
                     ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20'
                     : 'text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white border border-transparent'
                 } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}
@@ -78,12 +247,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        {/* Wallet */}
         <div className="p-4 border-t border-white/5">
           {sidebarCollapsed ? (
             <button
               onClick={() => setShowModal(true)}
               className="w-full p-2.5 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center hover:bg-[var(--color-primary)]/20 transition-colors"
+              aria-label="Connect wallet"
             >
               <Wallet size={18} />
             </button>
@@ -109,7 +278,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             exit={{ opacity: 0 }}
             className="lg:hidden fixed inset-0 z-50"
           >
-            <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
             <motion.aside
               initial={{ x: -280 }}
               animate={{ x: 0 }}
@@ -122,24 +291,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <LoreLogo className="w-8 h-8" />
                   <span className="font-display font-bold text-lg text-white">LORE</span>
                 </Link>
-                <button onClick={() => setSidebarOpen(false)} className="text-[var(--color-text-muted)] hover:text-white p-1">
+                <button onClick={() => setSidebarOpen(false)} className="text-[var(--color-text-muted)] hover:text-white p-1" aria-label="Close menu">
                   <X size={20} />
                 </button>
               </div>
-              <nav className="px-3 py-4 space-y-1">
+              <nav className="px-3 py-4 space-y-1" aria-label="Dashboard navigation">
                 {sidebarLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive = pathname === link.href;
                   return (
                     <Link
                       key={link.label}
                       href={link.href}
                       onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        isActive
-                          ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20'
-                          : 'text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white border border-transparent'
-                      }`}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-white border border-transparent transition-all"
                     >
                       <Icon size={18} />
                       {link.label}
@@ -164,10 +328,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        {/* Topbar */}
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-4 lg:px-8 flex-shrink-0">
+        <header className="h-16 border-b border-white/5 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 bg-[var(--color-bg-surface)]/50 backdrop-blur-sm">
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-[var(--color-text-secondary)] hover:text-white p-2 rounded-lg hover:bg-white/5">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-[var(--color-text-secondary)] hover:text-white p-2 rounded-lg hover:bg-white/5" aria-label="Open menu">
               <Menu size={20} />
             </button>
             <div className="relative hidden sm:block">
@@ -176,6 +339,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 type="text"
                 placeholder="Search wallets, tokens, narratives..."
                 className="w-64 lg:w-80 pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]/50 focus:ring-1 focus:ring-[var(--color-primary)]/20 transition-all"
+                aria-label="Search"
               />
             </div>
           </div>
@@ -185,23 +349,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="live-dot" />
               <span className="font-data text-xs text-[var(--color-positive)]">LIVE</span>
             </div>
-            <button onClick={() => showToast('Notifications: 3 unread alerts', 'info')} className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[var(--color-text-secondary)] hover:text-white">
+            <button onClick={() => showToast('Notifications: 3 unread alerts', 'info')} className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[var(--color-text-secondary)] hover:text-white" aria-label="Notifications">
               <Bell size={18} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--color-negative)]" />
             </button>
-            <button onClick={() => showToast('Settings panel coming soon', 'info')} className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[var(--color-text-secondary)] hover:text-white">
+            <button onClick={() => showToast('Settings panel coming soon', 'info')} className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[var(--color-text-secondary)] hover:text-white" aria-label="Settings">
               <Settings size={18} />
             </button>
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 p-4 lg:p-8 overflow-auto">
           {children}
         </main>
       </div>
 
-      {/* Wallet Modal */}
       <WalletModal
         show={showModal}
         onClose={() => setShowModal(false)}
