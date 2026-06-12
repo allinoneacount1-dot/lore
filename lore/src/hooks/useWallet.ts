@@ -19,10 +19,11 @@ export function useUnifiedWallet(): UnifiedWallet {
   const [evmAddress, setEvmAddress] = useState<string>('');
   const [evmBalance, setEvmBalance] = useState<string>('0');
   const [connecting, setConnecting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Check for saved EVM wallet
+  // Only read localStorage after mount (client-side only)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    setMounted(true);
     try {
       const saved = localStorage.getItem('lore_evm_wallet');
       if (saved) {
@@ -59,7 +60,6 @@ export function useUnifiedWallet(): UnifiedWallet {
       setEvmBalance(balance);
       localStorage.setItem('lore_evm_wallet', JSON.stringify({ address, balance }));
 
-      // Listen for account changes
       // @ts-ignore
       window.ethereum.on('accountsChanged', (accs: string[]) => {
         if (accs.length === 0) {
@@ -87,8 +87,7 @@ export function useUnifiedWallet(): UnifiedWallet {
     try {
       const resp = await solana.connect();
       const address = resp.publicKey.toString();
-      // For SOL balance, we'd need an RPC call - skip for now
-      setEvmAddress(address); // Reuse EVM state for simplicity
+      setEvmAddress(address);
       setEvmBalance('0');
       localStorage.setItem('lore_evm_wallet', JSON.stringify({ address, balance: '0' }));
     } catch (err) {
@@ -103,28 +102,12 @@ export function useUnifiedWallet(): UnifiedWallet {
     localStorage.removeItem('lore_evm_wallet');
   }, []);
 
-  const evmConnected = !!evmAddress;
-
-  if (evmConnected) {
-    return {
-      connected: true,
-      address: evmAddress,
-      balance: evmBalance,
-      chain: 'ethereum' as const,
-      walletName: 'MetaMask',
-      connectSolana,
-      connectEvm,
-      disconnect,
-      connecting,
-    };
-  }
-
   return {
-    connected: false,
-    address: '',
-    balance: '0',
-    chain: '',
-    walletName: '',
+    connected: !!evmAddress && mounted,
+    address: evmAddress,
+    balance: evmBalance,
+    chain: evmAddress ? 'ethereum' as const : '',
+    walletName: evmAddress ? 'MetaMask' : '',
     connectSolana,
     connectEvm,
     disconnect,

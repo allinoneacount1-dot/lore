@@ -2,11 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { useToast } from '@/components/Toast';
-import { useUnifiedWallet } from '@/hooks/useWallet';
-import { useRouter } from 'next/navigation';
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -28,22 +26,25 @@ const item = {
 };
 
 export default function HeroSection() {
-  const { showToast } = useToast();
-  const wallet = useUnifiedWallet();
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleEnterLore = () => {
-    if (wallet.connected) {
-      router.push('/dashboard');
-    } else {
-      showToast('Connect your wallet to enter the Lore', 'info');
-    }
-  };
+  if (!mounted) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070708]/60 via-transparent to-[#070708]/80 pointer-events-none" />
+        <div className="relative z-[2] max-w-4xl mx-auto px-5 text-center pt-24 pb-12">
+          <h1 className="text-h1 font-display text-white leading-[1.1]">
+            The Intelligence Layer{' '}
+            <span className="text-gradient">for Crypto Markets</span>
+          </h1>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative min-h-screen flex items-center justify-center">
@@ -66,10 +67,10 @@ export default function HeroSection() {
         </motion.p>
 
         <motion.div variants={item} className="mt-10 flex items-center justify-center">
-          <button onClick={handleEnterLore} className="btn-primary text-base flex items-center gap-2">
+          <Link href="/auth/login" className="btn-primary text-base flex items-center gap-2">
             Enter the Lore
             <ArrowRight size={18} />
-          </button>
+          </Link>
         </motion.div>
 
         <motion.div variants={item} className="mt-16 flex flex-wrap items-center justify-center gap-8 md:gap-12">
@@ -83,10 +84,7 @@ export default function HeroSection() {
           ))}
         </motion.div>
 
-        <motion.div
-          variants={item}
-          className="mt-16 flex flex-col items-center gap-2"
-        >
+        <motion.div variants={item} className="mt-16 flex flex-col items-center gap-2">
           <span className="text-xs text-[var(--color-text-muted)] font-data">SCROLL</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}

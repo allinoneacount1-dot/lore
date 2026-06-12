@@ -1,4 +1,4 @@
-import Navbar from '@/components/Navbar';
+import LandingNavbar from '@/components/LandingNavbar';
 import FullPageScene from '@/components/FullPageScene';
 import HeroSection from '@/components/HeroSection';
 import LiveTicker from '@/components/LiveTicker';
@@ -16,7 +16,7 @@ export default function Home() {
 
       {/* ── All page content sits above the 3D canvas ── */}
       <div className="relative z-10">
-        <Navbar />
+        <LandingNavbar />
         <HeroSection />
         <LiveTicker />
         <FeatureGrid />
