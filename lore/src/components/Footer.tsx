@@ -4,9 +4,26 @@ import Link from 'next/link';
 import { LoreLogo } from './LoreLogo';
 
 const footerLinks = {
-  Product: ['Intelligence', 'Narrative', 'Terminal', 'API', 'Docs'],
-  Company: ['About', 'Blog', 'Careers', 'Press', 'Contact'],
-  Legal: ['Privacy Policy', 'Terms of Service', 'Security', 'Bug Bounty'],
+  Product: [
+    { label: 'Intelligence', href: '#intelligence' },
+    { label: 'Narrative', href: '#narrative' },
+    { label: 'Terminal', href: '#terminal' },
+    { label: 'API', href: '#' },
+    { label: 'Docs', href: '#' },
+  ],
+  Company: [
+    { label: 'About', href: '/about' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Press', href: '/press' },
+    { label: 'Contact', href: '/contact' },
+  ],
+  Legal: [
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Security', href: '/security' },
+    { label: 'Bug Bounty', href: '/bug-bounty' },
+  ],
 };
 
 const SocialIcon = ({ type }: { type: string }) => {
@@ -39,13 +56,15 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               {[
-                { name: 'Twitter', type: 'twitter' },
-                { name: 'Discord', type: 'discord' },
-                { name: 'Telegram', type: 'telegram' },
+                { name: 'Twitter', type: 'twitter', href: 'https://x.com/vaultmarco' },
+                { name: 'Discord', type: 'discord', href: '#' },
+                { name: 'Telegram', type: 'telegram', href: '#' },
               ].map((social) => (
                 <Link
                   key={social.name}
-                  href="#"
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/5 transition-all"
                   title={social.name}
                 >
@@ -63,12 +82,12 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <Link
-                      href="#"
+                      href={link.href}
                       className="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
