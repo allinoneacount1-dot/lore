@@ -1,11 +1,12 @@
+// src/components/HeroSection.tsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { useUnifiedWallet } from '@/hooks/useWallet';
 import { useRouter } from 'next/navigation';
-import { WalletButton } from './WalletConnect';
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -30,6 +31,11 @@ export default function HeroSection() {
   const { showToast } = useToast();
   const wallet = useUnifiedWallet();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleEnterLore = () => {
     if (wallet.connected) {
@@ -41,29 +47,24 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center">
-      {/* Soft gradient overlay — lets 3D show through but keeps text readable */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#070708]/60 via-transparent to-[#070708]/80 pointer-events-none" />
 
-      {/* Content */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="relative z-[2] max-w-4xl mx-auto px-5 text-center pt-24 pb-12"
       >
-        {/* Headline */}
         <motion.h1 variants={item} className="text-h1 font-display text-white leading-[1.1]">
           The Intelligence Layer{' '}
           <span className="text-gradient">for Crypto Markets</span>
         </motion.h1>
 
-        {/* Subheadline */}
         <motion.p variants={item} className="mt-6 text-lg md:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto leading-relaxed">
           Lore reads the blockchain like a living story. Every transaction a sentence.
           Every wallet a character. Every market move a plot twist.
         </motion.p>
 
-        {/* CTAs */}
         <motion.div variants={item} className="mt-10 flex items-center justify-center">
           <button onClick={handleEnterLore} className="btn-primary text-base flex items-center gap-2">
             Enter the Lore
@@ -71,7 +72,6 @@ export default function HeroSection() {
           </button>
         </motion.div>
 
-        {/* Stats */}
         <motion.div variants={item} className="mt-16 flex flex-wrap items-center justify-center gap-8 md:gap-12">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
@@ -83,7 +83,6 @@ export default function HeroSection() {
           ))}
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           variants={item}
           className="mt-16 flex flex-col items-center gap-2"
