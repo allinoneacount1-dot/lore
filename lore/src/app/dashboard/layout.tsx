@@ -6,10 +6,11 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell, LayoutDashboard, Menu, Radio, Search,
-  Settings, Shield, TrendingUp, Wallet, X,
+  Settings, Shield, Wallet, X,
   FileText, Smile, Briefcase, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { useWallet, WalletModal, WalletButton } from '@/components/WalletConnect';
+import { useWalletContext } from '@/components/WalletProvider';
+import { WalletModal, WalletButton } from '@/components/WalletConnect';
 import { useToast } from '@/components/Toast';
 import { LoreLogo } from '@/components/LoreLogo';
 
@@ -27,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { showToast } = useToast();
-  const { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress } = useWallet();
+  const { wallet, connecting, showModal, setShowModal, openModal, connect, disconnect, copied, copyAddress } = useWalletContext();
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)] flex">

@@ -1,15 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, ExternalLink, Check, Wallet, ChevronRight } from 'lucide-react';
 
-interface WalletState {
-  connected: boolean;
-  address: string;
-  balance: string;
-  chain: string;
-}
+import type { WalletState } from './WalletProvider';
 
 const MOCK_WALLETS = [
   { name: 'Phantom', chain: 'Solana', type: 'phantom' as const },
@@ -64,59 +59,8 @@ function truncateAddress(addr: string) {
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 }
 
-export function useWallet() {
-  const [wallet, setWallet] = useState<WalletState>({
-    connected: false,
-    address: '',
-    balance: '0.00',
-    chain: '',
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [connecting, setConnecting] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const connect = useCallback(async (walletName: string) => {
-    setConnecting(true);
-    // Simulate connection delay
-    await new Promise((r) => setTimeout(r, 1500));
-
-    // Generate mock address
-    const addr = '0x' + Array.from({ length: 40 }, () =>
-      '0123456789abcdef'[Math.floor(Math.random() * 16)]
-    ).join('');
-
-    const chains: Record<string, string> = {
-      Phantom: 'Solana',
-      MetaMask: 'Ethereum',
-      WalletConnect: 'Ethereum',
-    };
-
-    setWallet({
-      connected: true,
-      address: addr,
-      balance: (Math.random() * 10).toFixed(4),
-      chain: chains[walletName] || 'Ethereum',
-    });
-    setConnecting(false);
-    setShowModal(false);
-  }, []);
-
-  const disconnect = useCallback(() => {
-    setWallet({ connected: false, address: '', balance: '0.00', chain: '' });
-  }, []);
-
-  const copyAddress = useCallback(() => {
-    if (wallet.address) {
-      navigator.clipboard.writeText(wallet.address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  }, [wallet.address]);
-
-  const openModal = useCallback(() => setShowModal(true), []);
-
-  return { wallet, showModal, setShowModal, openModal, connect, disconnect, connecting, copied, copyAddress };
-}
+// WalletModal and WalletButton below use WalletState from WalletProvider context.
+// The old useWallet hook has been replaced by WalletProvider for unified state.
 
 export function WalletModal({
   show,

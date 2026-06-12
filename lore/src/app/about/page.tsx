@@ -494,7 +494,7 @@ export default function AboutPage() {
               <Zap size={18} />
             </Link>
             <Link
-              href="/#pricing"
+              href="/pricing"
               className="btn-secondary text-base inline-flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               View Pricing

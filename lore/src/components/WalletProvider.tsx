@@ -10,6 +10,8 @@ interface WalletState {
   walletType: string;
 }
 
+export type { WalletState };
+
 interface WalletContextType {
   wallet: WalletState;
   connect: (walletType: string) => Promise<void>;
