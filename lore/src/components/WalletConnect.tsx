@@ -12,9 +12,24 @@ interface WalletState {
 }
 
 const MOCK_WALLETS = [
-  { name: 'Phantom', icon: '👻', chain: 'Solana' },
-  { name: 'MetaMask', icon: '🦊', chain: 'Ethereum' },
-  { name: 'WalletConnect', icon: '🔗', chain: 'Multi-chain' },
+  {
+    name: 'Phantom',
+    // Phantom logo from their official CDN
+    icon: 'https://www.phantom.app/favicon/favicon-32x32.png',
+    chain: 'Solana',
+  },
+  {
+    name: 'MetaMask',
+    // MetaMask fox from official repo via jsdelivr
+    icon: 'https://cdn.jsdelivr.net/gh/MetaMask/brand-resources@master/SVG/metamask-fox.svg',
+    chain: 'Ethereum',
+  },
+  {
+    name: 'WalletConnect',
+    // WalletConnect logo from official repo via jsdelivr
+    icon: 'https://cdn.jsdelivr.net/gh/WalletConnect/walletconnect-assets@master/Logo/Blue%20(Default)/Logo.svg',
+    chain: 'Multi-chain',
+  },
 ];
 
 function truncateAddress(addr: string) {
@@ -130,7 +145,7 @@ export function WalletModal({
                   disabled={connecting}
                   className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-[#6C5CE7]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
-                  <span className="text-2xl">{w.icon}</span>
+                  <img src={w.icon} alt={w.name} className="w-8 h-8 rounded-lg" />
                   <div className="text-left flex-1">
                     <div className="font-medium text-white">{w.name}</div>
                     <div className="text-xs text-[#5A5A72]">{w.chain}</div>

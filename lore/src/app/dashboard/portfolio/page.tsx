@@ -9,6 +9,15 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 
+const COIN_LOGOS: Record<string, string> = {
+  BTC: 'https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png',
+  ETH: 'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png',
+  SOL: 'https://coin-images.coingecko.com/coins/images/4128/small/solana.png',
+  ARB: 'https://coin-images.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+  LINK: 'https://coin-images.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
+  UNI: 'https://coin-images.coingecko.com/coins/images/12504/small/uni.jpg',
+};
+
 const portfolioData = [
   { symbol: 'BTC', name: 'Bitcoin', amount: 1.245, value: 78912.45, change: 2.34, allocation: 42.1 },
   { symbol: 'ETH', name: 'Ethereum', amount: 12.8, value: 21504.00, change: -0.87, allocation: 28.3 },
@@ -117,9 +126,12 @@ export default function PortfolioPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6C5CE7]/20 to-[#00D2FF]/10 flex items-center justify-center font-display font-bold text-xs text-white">
-                          {asset.symbol.slice(0, 2)}
-                        </div>
+                        <img
+                          src={COIN_LOGOS[asset.symbol] || ''}
+                          alt={asset.symbol}
+                          className="w-8 h-8 rounded-full"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
                         <div>
                           <div className="text-sm font-medium text-white">{asset.symbol}</div>
                           <div className="text-xs text-[#5A5A72]">{asset.name}</div>
