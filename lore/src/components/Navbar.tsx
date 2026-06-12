@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { LoreLogo } from './LoreLogo';
-import { useWallet, WalletModal, WalletButton } from './WalletConnect';
+import { useWalletContext } from './WalletProvider';
+import { WalletModal, WalletButton } from './WalletConnect';
 
 const navLinks = [
   { label: 'Intelligence', href: '#intelligence' },
@@ -17,7 +18,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress } = useWallet();
+  const { wallet, connecting, showModal, setShowModal, openModal, connect, disconnect, copied, copyAddress } = useWalletContext();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -66,7 +67,7 @@ export default function Navbar() {
             </div>
             <WalletButton
               wallet={wallet}
-              onOpenModal={() => setShowModal(true)}
+              onOpenModal={openModal}
               onDisconnect={disconnect}
               onCopyAddress={copyAddress}
               copied={copied}

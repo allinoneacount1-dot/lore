@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Sparkles, Zap, Crown, ArrowRight, HelpCircle } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import { useWalletContext } from '@/components/WalletProvider';
+import { useToast } from '@/components/Toast';
+import { useRouter } from 'next/navigation';
 
 /* ── Pricing Data ── */
 const plans = [
@@ -54,7 +58,7 @@ const plans = [
       { text: 'API access (10K calls/day)', included: true },
       { text: 'Priority support', included: false },
     ],
-    cta: 'Most Popular',
+    cta: 'Start Free Trial',
   },
   {
     id: 'architect',
@@ -126,14 +130,43 @@ const comparisonRows = [
 export default function PricingPage() {
   const [annual, setAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { wallet, openModal } = useWalletContext();
+  const { showToast } = useToast();
+  const router = useRouter();
+
+  const handleStartSeeker = () => {
+    if (wallet?.connected) {
+      router.push('/dashboard');
+    } else {
+      showToast('Connect your wallet to get started', 'info');
+      openModal();
+    }
+  };
+
+  const handleStartTrial = () => {
+    if (wallet?.connected) {
+      showToast('7-day free trial activated! 🎉', 'success');
+      router.push('/dashboard');
+    } else {
+      showToast('Connect your wallet to start your free trial', 'info');
+      openModal();
+    }
+  };
+
+  const handleContactSales = () => {
+    showToast('Our team will reach out within 24 hours', 'success');
+  };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      {/* Subtle backdrop since pricing is a standalone page */}
+      {/* Background */}
       <div className="fixed inset-0 bg-[#070708]" />
       <div className="fixed inset-0 bg-gradient-to-b from-[#070708] via-[#0D0D2B]/30 to-[#070708]" />
 
       <div className="relative z-10">
+        {/* Navbar */}
+        <Navbar />
+
         {/* ── Hero ── */}
         <section className="pt-28 pb-16 text-center">
           <motion.div
@@ -190,6 +223,13 @@ export default function PricingPage() {
               {plans.map((plan, i) => {
                 const Icon = plan.icon;
                 const price = annual ? plan.yearlyPrice : plan.monthlyPrice;
+
+                const handlePlanCTA = () => {
+                  if (plan.id === 'seeker') handleStartSeeker();
+                  else if (plan.id === 'oracle') handleStartTrial();
+                  else handleContactSales();
+                };
+
                 return (
                   <motion.div
                     key={plan.id}
@@ -258,6 +298,7 @@ export default function PricingPage() {
 
                     {/* CTA */}
                     <button
+                      onClick={handlePlanCTA}
                       className={`w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 ${
                         plan.popular
                           ? 'btn-primary'
@@ -413,7 +454,10 @@ export default function PricingPage() {
               <p className="mt-4 text-lg text-[var(--color-text-secondary)]">
                 Start free. Upgrade when you are ready. No credit card required.
               </p>
-              <button className="mt-8 btn-primary text-base inline-flex items-center gap-2">
+              <button
+                onClick={handleStartSeeker}
+                className="mt-8 btn-primary text-base inline-flex items-center gap-2"
+              >
                 Start with Seeker — Free
                 <ArrowRight size={18} />
               </button>
