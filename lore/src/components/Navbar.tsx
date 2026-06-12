@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { LoreLogo } from './LoreLogo';
 import { useWallet, WalletModal, WalletButton } from './WalletConnect';
 
 const navLinks = [
@@ -41,10 +42,8 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-[1280px] mx-auto px-5 lg:px-20 h-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center font-display font-bold text-sm text-white group-hover:shadow-[0_0_20px_rgba(108,92,231,0.3)] transition-shadow">
-              L
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <LoreLogo className="w-8 h-8 group-hover:shadow-[0_0_20px_rgba(108,92,231,0.3)] transition-shadow" />
             <span className="font-display font-bold text-xl text-white">LORE</span>
           </Link>
 

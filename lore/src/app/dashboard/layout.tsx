@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useWallet, WalletModal, WalletButton } from '@/components/WalletConnect';
 import { useToast } from '@/components/Toast';
+import { LoreLogo } from '@/components/LoreLogo';
 
 const sidebarLinks = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
@@ -92,7 +93,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               <div className="flex items-center justify-between p-5">
                 <Link href="/" className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] flex items-center justify-center font-display font-bold text-sm text-white">L</div>
+                  <LoreLogo className="w-8 h-8" />
                   <span className="font-display font-bold text-lg text-white">LORE</span>
                 </Link>
                 <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#5A5A72] hover:text-white p-1">
