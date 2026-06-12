@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Clock, Eye, Filter, Globe, Heart, MessageCircle,
@@ -8,6 +8,7 @@ import {
   ChevronDown, ExternalLink, Bookmark, ThumbsUp, AlertTriangle
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import { useNarratives } from '@/hooks/useCryptoData';
 import {
   DashboardPage,
   StatCard,
@@ -19,141 +20,67 @@ import {
 
 const categories = ['All', 'DeFi', 'NFT', 'Layer 1', 'Layer 2', 'AI', 'Gaming', 'Regulation'];
 
-const narratives = [
-  {
-    id: 1,
-    title: 'Institutional Bitcoin Accumulation Enters Phase 3',
-    summary: 'On-chain data reveals a coordinated accumulation pattern among 12 wallets linked to institutional entities. Historical correlation suggests a 78% probability of significant price movement within 14 days.',
-    category: 'Layer 1',
-    sentiment: 'bullish',
-    confidence: 94,
-    timeframe: '14 days',
-    sources: 14,
-    wallets: 12,
-    timestamp: '2 hours ago',
-    tags: ['Bitcoin', 'Institutional', 'Accumulation'],
-    liked: false,
-    bookmarked: true,
-  },
-  {
-    id: 2,
-    title: 'DeFi Exploit Pattern Detected: Oracle Manipulation Imminent',
-    summary: 'Our AI has identified a pattern matching 3 previous exploits. A flash loan attack targeting Protocol X is highly probable within the next 6 hours. Estimated exposure: $4.2M.',
-    category: 'DeFi',
-    sentiment: 'bearish',
-    confidence: 87,
-    timeframe: '6 hours',
-    sources: 8,
-    wallets: 3,
-    timestamp: '45 minutes ago',
-    tags: ['DeFi', 'Exploit', 'Oracle', 'Flash Loan'],
-    liked: true,
-    bookmarked: false,
-  },
-  {
-    id: 3,
-    title: 'AI Token Narrative Reaches Critical Mass',
-    summary: 'Social sentiment for AI-related tokens has surged 340% in 24 hours. Smart money wallets are accumulating 7 key tokens. Historical pattern suggests 2-5x potential within 30 days.',
-    category: 'AI',
-    sentiment: 'bullish',
-    confidence: 76,
-    timeframe: '30 days',
-    sources: 11,
-    wallets: 23,
-    timestamp: '1 hour ago',
-    tags: ['AI', 'Sentiment', 'Smart Money'],
-    liked: false,
-    bookmarked: false,
-  },
-  {
-    id: 4,
-    title: 'Layer 2 Activity Surge Signals Altseason Rotation',
-    summary: 'L2 transaction volume has increased 180% week-over-week. Capital rotation from L1 to L2 is accelerating. Key beneficiaries: Arbitrum, Optimism, and Base ecosystems.',
-    category: 'Layer 2',
-    sentiment: 'bullish',
-    confidence: 82,
-    timeframe: '7 days',
-    sources: 9,
-    wallets: 45,
-    timestamp: '3 hours ago',
-    tags: ['Layer 2', 'Altseason', 'Arbitrum', 'Optimism'],
-    liked: false,
-    bookmarked: true,
-  },
-  {
-    id: 5,
-    title: 'Regulatory Pressure Building on Stablecoin Issuers',
-    summary: 'Three regulatory bodies have issued coordinated statements. Stablecoin issuers face new compliance requirements. USDC and USDT flows show early signs of de-risking.',
-    category: 'Regulation',
-    sentiment: 'bearish',
-    confidence: 71,
-    timeframe: '90 days',
-    sources: 6,
-    wallets: 8,
-    timestamp: '5 hours ago',
-    tags: ['Regulation', 'Stablecoins', 'Compliance'],
-    liked: false,
-    bookmarked: false,
-  },
-  {
-    id: 6,
-    title: 'NFT Floor Prices Forming Macro Bottom',
-    summary: 'Blue-chip NFT floor prices have stabilized after 18 months of decline. Whale accumulation detected across 5 major collections. Historical pattern suggests early-stage recovery.',
-    category: 'NFT',
-    sentiment: 'bullish',
-    confidence: 68,
-    timeframe: '60 days',
-    sources: 7,
-    wallets: 15,
-    timestamp: '4 hours ago',
-    tags: ['NFT', 'Bottom', 'Whale Accumulation'],
-    liked: false,
-    bookmarked: false,
-  },
-];
-
-const statsData = [
-  { label: 'Active Narratives', value: '24', icon: Brain },
-  { label: 'Avg. Confidence', value: '79%', icon: Star },
-  { label: 'Data Sources', value: '14', icon: Globe },
-  { label: 'Wallets Tracked', value: '12.8K', icon: Eye },
-];
-
 export default function NarrativesPage() {
   const { showToast } = useToast();
+  const { data, loading } = useNarratives();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [narrativeList, setNarrativeList] = useState(narratives);
-  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
 
-  // Simulate initial data load
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const narratives = data?.narratives ?? [];
 
-  const filtered = narrativeList.filter((n) => {
-    const matchCategory = activeCategory === 'All' || n.category === activeCategory;
-    const matchSearch = n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      n.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchCategory && matchSearch;
-  });
+  const filtered = useMemo(() =>
+    narratives.filter((n: any) => {
+      const matchCategory = activeCategory === 'All' || n.category === activeCategory;
+      const matchSearch = n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (n.tokens ?? []).some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchCategory && matchSearch;
+    }),
+    [narratives, activeCategory, searchQuery]
+  );
 
-  const toggleLike = (id: number) => {
-    setNarrativeList((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, liked: !n.liked } : n))
-    );
-    const n = narrativeList.find((x) => x.id === id);
-    showToast(n?.liked ? 'Removed from liked' : 'Added to liked', 'success');
+  // Derive count stats from live data
+  const avgConfidence = useMemo(() => {
+    if (narratives.length === 0) return '—';
+    const avg = Math.round(narratives.reduce((sum: number, n: any) => sum + (n.confidence ?? 0), 0) / narratives.length);
+    return `${avg}%`;
+  }, [narratives]);
+
+  const totalSources = useMemo(() => {
+    return narratives.reduce((sum: number, n: any) => sum + (n.sources ?? 0), 0);
+  }, [narratives]);
+
+  const totalWallets = useMemo(() => {
+    const total = narratives.reduce((sum: number, n: any) => sum + (n.wallets ?? 0), 0);
+    if (total >= 1000) return `${(total / 1000).toFixed(1)}K`;
+    return String(total);
+  }, [narratives]);
+
+  const statsData = useMemo(() => [
+    { label: 'Active Narratives', value: String(narratives.length), icon: Brain },
+    { label: 'Avg. Confidence', value: avgConfidence, icon: Star },
+    { label: 'Data Sources', value: String(totalSources), icon: Globe },
+    { label: 'Wallets Tracked', value: totalWallets, icon: Eye },
+  ], [narratives.length, avgConfidence, totalSources, totalWallets]);
+
+  const toggleLike = (id: string) => {
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+    showToast(likedIds.has(id) ? 'Removed from liked' : 'Added to liked', 'success');
   };
 
-  const toggleBookmark = (id: number) => {
-    setNarrativeList((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, bookmarked: !n.bookmarked } : n))
-    );
-    const n = narrativeList.find((x) => x.id === id);
-    showToast(n?.bookmarked ? 'Removed from bookmarks' : 'Bookmarked', 'success');
+  const toggleBookmark = (id: string) => {
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+    showToast(bookmarkedIds.has(id) ? 'Removed from bookmarks' : 'Bookmarked', 'success');
   };
 
   const getSentimentColor = (s: string) => {
@@ -237,140 +164,147 @@ export default function NarrativesPage() {
           <EmptyState
             icon={Brain}
             title="No narratives found"
-            description="Try adjusting your search or filter criteria."
+            description={narratives.length === 0
+              ? "Narrative data is being generated. Check back shortly."
+              : "Try adjusting your search or filter criteria."
+            }
           />
         ) : (
           <div className="space-y-4">
             <AnimatePresence>
-              {filtered.map((narrative, i) => (
-                <motion.div
-                  key={narrative.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="card-glass rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/20 transition-all"
-                >
-                  <div className="p-6">
-                    {/* Top Row */}
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${getSentimentColor(narrative.sentiment)}`}>
-                            {getSentimentIcon(narrative.sentiment)}
-                            {narrative.sentiment.charAt(0).toUpperCase() + narrative.sentiment.slice(1)}
-                          </span>
-                          <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[var(--color-text-secondary)] border border-white/10">
-                            {narrative.category}
-                          </span>
-                          <span className="font-data text-xs text-[var(--color-text-muted)] flex items-center gap-1">
-                            <Clock size={12} />
-                            {narrative.timestamp}
-                          </span>
-                        </div>
-                        <h3 className="font-display font-semibold text-lg text-white mb-2">
-                          {narrative.title}
-                        </h3>
-                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                          {narrative.summary}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {narrative.tags.map((tag) => (
-                        <span key={tag} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[var(--color-text-muted)]">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Bottom Row */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[var(--color-positive)]' : narrative.confidence >= 60 ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-negative)]'}`}
-                              style={{ width: `${narrative.confidence}%` }}
-                            />
+              {filtered.map((narrative: any, i: number) => {
+                const isLiked = likedIds.has(narrative.id);
+                const isBookmarked = bookmarkedIds.has(narrative.id);
+                return (
+                  <motion.div
+                    key={narrative.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="card-glass rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/20 transition-all"
+                  >
+                    <div className="p-6">
+                      {/* Top Row */}
+                      <div className="flex items-start justify-between gap-4 mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${getSentimentColor(narrative.sentiment)}`}>
+                              {getSentimentIcon(narrative.sentiment)}
+                              {narrative.sentiment.charAt(0).toUpperCase() + narrative.sentiment.slice(1)}
+                            </span>
+                            <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-[var(--color-text-secondary)] border border-white/10">
+                              {narrative.category}
+                            </span>
+                            <span className="font-data text-xs text-[var(--color-text-muted)] flex items-center gap-1">
+                              <Clock size={12} />
+                              {narrative.timestamp}
+                            </span>
                           </div>
-                          <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.confidence}% confidence</span>
+                          <h3 className="font-display font-semibold text-lg text-white mb-2">
+                            {narrative.title}
+                          </h3>
+                          <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                            {narrative.summary}
+                          </p>
                         </div>
-                        <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.sources} sources</span>
-                        <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.wallets} wallets</span>
-                        <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {narrative.timeframe}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleLike(narrative.id)}
-                          className={`p-2 rounded-lg transition-colors ${narrative.liked ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
-                        >
-                          <Heart size={16} fill={narrative.liked ? 'currentColor' : 'none'} />
-                        </button>
-                        <button
-                          onClick={() => toggleBookmark(narrative.id)}
-                          className={`p-2 rounded-lg transition-colors ${narrative.bookmarked ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
-                        >
-                          <Bookmark size={16} fill={narrative.bookmarked ? 'currentColor' : 'none'} />
-                        </button>
-                        <button
-                          onClick={() => showToast('Shared to clipboard!', 'success')}
-                          className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
-                        >
-                          <Share2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => setExpandedId(expandedId === narrative.id ? null : narrative.id)}
-                          className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
-                        >
-                          <ChevronDown size={16} className={`transition-transform ${expandedId === narrative.id ? 'rotate-180' : ''}`} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Expanded Details */}
-                  <AnimatePresence>
-                    {expandedId === narrative.id && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="border-t border-white/5 overflow-hidden"
-                      >
-                        <div className="p-6 bg-white/[0.02]">
-                          <h4 className="font-display font-semibold text-sm text-white mb-3">Key Insights</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                              <div className="text-xs text-[var(--color-text-muted)] mb-1">Pattern Match</div>
-                              <div className="text-sm text-white">Matches 3 previous institutional accumulation cycles with 94% similarity</div>
+                      {/* Tags (tokens from API) */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {(narrative.tokens ?? []).map((token: string) => (
+                          <span key={token} className="px-2 py-1 rounded-md text-xs font-data bg-white/5 text-[var(--color-text-muted)]">
+                            #{token}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Bottom Row */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${narrative.confidence >= 80 ? 'bg-[var(--color-positive)]' : narrative.confidence >= 60 ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-negative)]'}`}
+                                style={{ width: `${narrative.confidence}%` }}
+                              />
                             </div>
-                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                              <div className="text-xs text-[var(--color-text-muted)] mb-1">Risk Assessment</div>
-                              <div className="text-sm text-white">Low risk of false positive. Multiple independent sources confirm the pattern.</div>
+                            <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.confidence}% confidence</span>
+                          </div>
+                          <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.sources} sources</span>
+                          <span className="font-data text-xs text-[var(--color-text-muted)]">{narrative.wallets} wallets</span>
+                          <span className="font-data text-xs text-[var(--color-text-muted)]">ETA: {narrative.timeframe}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleLike(narrative.id)}
+                            className={`p-2 rounded-lg transition-colors ${isLiked ? 'bg-[var(--color-negative)]/10 text-[var(--color-negative)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
+                          >
+                            <Heart size={16} fill={isLiked ? 'currentColor' : 'none'} />
+                          </button>
+                          <button
+                            onClick={() => toggleBookmark(narrative.id)}
+                            className={`p-2 rounded-lg transition-colors ${isBookmarked ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'hover:bg-white/5 text-[var(--color-text-muted)]'}`}
+                          >
+                            <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
+                          </button>
+                          <button
+                            onClick={() => showToast('Shared to clipboard!', 'success')}
+                            className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
+                          >
+                            <Share2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => setExpandedId(expandedId === narrative.id ? null : narrative.id)}
+                            className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] transition-colors"
+                          >
+                            <ChevronDown size={16} className={`transition-transform ${expandedId === narrative.id ? 'rotate-180' : ''}`} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expanded Details */}
+                    <AnimatePresence>
+                      {expandedId === narrative.id && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="border-t border-white/5 overflow-hidden"
+                        >
+                          <div className="p-6 bg-white/[0.02]">
+                            <h4 className="font-display font-semibold text-sm text-white mb-3">Key Insights</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                              <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                                <div className="text-xs text-[var(--color-text-muted)] mb-1">Pattern Match</div>
+                                <div className="text-sm text-white">Matches 3 previous institutional accumulation cycles with 94% similarity</div>
+                              </div>
+                              <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                                <div className="text-xs text-[var(--color-text-muted)] mb-1">Risk Assessment</div>
+                                <div className="text-sm text-white">Low risk of false positive. Multiple independent sources confirm the pattern.</div>
+                              </div>
+                            </div>
+                            <div className="flex gap-3">
+                              <button onClick={() => showToast('Opening full analysis...', 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
+                                View Full Analysis
+                              </button>
+                              <button
+                                onClick={() => showToast('Opening block explorer...', 'info')}
+                                className="btn-secondary text-sm !px-4 !py-2 !rounded-lg flex items-center gap-2"
+                              >
+                                <ExternalLink size={14} />
+                                View on Explorer
+                              </button>
                             </div>
                           </div>
-                          <div className="flex gap-3">
-                            <button onClick={() => showToast('Opening full analysis...', 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
-                              View Full Analysis
-                            </button>
-                            <button
-                              onClick={() => showToast('Opening block explorer...', 'info')}
-                              className="btn-secondary text-sm !px-4 !py-2 !rounded-lg flex items-center gap-2"
-                            >
-                              <ExternalLink size={14} />
-                              View on Explorer
-                            </button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
