@@ -70,7 +70,9 @@ export function useWallet() {
     }
   }, [wallet.address]);
 
-  return { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress };
+  const openModal = useCallback(() => setShowModal(true), []);
+
+  return { wallet, showModal, setShowModal, openModal, connect, disconnect, connecting, copied, copyAddress };
 }
 
 export function WalletModal({

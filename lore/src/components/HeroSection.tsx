@@ -2,6 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, Play } from 'lucide-react';
+import { useToast } from '@/components/Toast';
+import { useWallet } from '@/components/WalletConnect';
+import { useRouter } from 'next/navigation';
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -23,6 +26,23 @@ const item = {
 };
 
 export default function HeroSection() {
+  const { showToast } = useToast();
+  const { wallet, openModal } = useWallet();
+  const router = useRouter();
+
+  const handleEnterLore = () => {
+    if (wallet) {
+      router.push('/dashboard');
+    } else {
+      openModal();
+      showToast('Connect your wallet to enter the Lore', 'info');
+    }
+  };
+
+  const handleWatchDemo = () => {
+    showToast('Demo video coming soon! Follow @vaultmarco for updates.', 'info');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background layers */}
@@ -82,11 +102,11 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <motion.div variants={item} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button className="btn-primary text-base flex items-center gap-2 w-full sm:w-auto justify-center">
+          <button onClick={handleEnterLore} className="btn-primary text-base flex items-center gap-2 w-full sm:w-auto justify-center">
             Enter the Lore
             <ArrowRight size={18} />
           </button>
-          <button className="btn-secondary flex items-center gap-2 w-full sm:w-auto justify-center">
+          <button onClick={handleWatchDemo} className="btn-secondary flex items-center gap-2 w-full sm:w-auto justify-center">
             <Play size={16} />
             Watch Demo
           </button>
