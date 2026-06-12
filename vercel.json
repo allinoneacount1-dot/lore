@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd lore && npm run build",
+  "installCommand": "cd lore && npm install",
+  "outputDirectory": "lore/.next",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/lore"
+    }
+  ]
+}
