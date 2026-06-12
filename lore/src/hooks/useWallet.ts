@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useWallet as useSolanaWallet, useConnection } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 export interface UnifiedWallet {
   connected: boolean;
@@ -18,53 +16,24 @@ export interface UnifiedWallet {
 }
 
 export function useUnifiedWallet(): UnifiedWallet {
-  const solanaWallet = useSolanaWallet();
-  const { connection } = useConnection();
   const [evmAddress, setEvmAddress] = useState<string>('');
   const [evmBalance, setEvmBalance] = useState<string>('0');
   const [connecting, setConnecting] = useState(false);
-  const [solanaBalance, setSolanaBalance] = useState<string>('0');
-
-  // Fetch SOL balance when Solana wallet connects
-  useEffect(() => {
-    if (solanaWallet.connected && solanaWallet.publicKey) {
-      connection.getBalance(solanaWallet.publicKey).then((bal) => {
-        setSolanaBalance((bal / LAMPORTS_PER_SOL).toFixed(4));
-      });
-    } else {
-      setSolanaBalance('0');
-    }
-  }, [solanaWallet.connected, solanaWallet.publicKey, connection]);
 
   // Check for saved EVM wallet
   useEffect(() => {
-    const saved = localStorage.getItem('lore_evm_wallet');
-    if (saved) {
-      try {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('lore_evm_wallet');
+      if (saved) {
         const { address, balance } = JSON.parse(saved);
         setEvmAddress(address);
         setEvmBalance(balance || '0');
-      } catch {
-        localStorage.removeItem('lore_evm_wallet');
       }
+    } catch {
+      // ignore
     }
   }, []);
-
-  const connectSolana = useCallback(async () => {
-    if (!solanaWallet.wallet) {
-      // No Solana wallet installed
-      window.open('https://phantom.app/download', '_blank');
-      return;
-    }
-    setConnecting(true);
-    try {
-      await solanaWallet.select(solanaWallet.wallet.adapter.name);
-      await solanaWallet.connect();
-    } catch (err) {
-      console.error('Solana connect failed:', err);
-    }
-    setConnecting(false);
-  }, [solanaWallet]);
 
   const connectEvm = useCallback(async () => {
     // @ts-ignore
@@ -90,7 +59,7 @@ export function useUnifiedWallet(): UnifiedWallet {
       setEvmBalance(balance);
       localStorage.setItem('lore_evm_wallet', JSON.stringify({ address, balance }));
 
-      // Listen for account/chain changes
+      // Listen for account changes
       // @ts-ignore
       window.ethereum.on('accountsChanged', (accs: string[]) => {
         if (accs.length === 0) {
@@ -107,45 +76,41 @@ export function useUnifiedWallet(): UnifiedWallet {
     setConnecting(false);
   }, []);
 
-  const disconnect = useCallback(async () => {
-    if (solanaWallet.connected) {
-      try {
-        await solanaWallet.disconnect();
-      } catch {
-        // ignore
-      }
+  const connectSolana = useCallback(async () => {
+    // @ts-ignore
+    const solana = window.solana || window.phantom?.solana;
+    if (!solana) {
+      window.open('https://phantom.app/download', '_blank');
+      return;
     }
-    if (evmAddress) {
-      setEvmAddress('');
+    setConnecting(true);
+    try {
+      const resp = await solana.connect();
+      const address = resp.publicKey.toString();
+      // For SOL balance, we'd need an RPC call - skip for now
+      setEvmAddress(address); // Reuse EVM state for simplicity
       setEvmBalance('0');
-      localStorage.removeItem('lore_evm_wallet');
+      localStorage.setItem('lore_evm_wallet', JSON.stringify({ address, balance: '0' }));
+    } catch (err) {
+      console.error('Solana connect failed:', err);
     }
-  }, [solanaWallet, evmAddress]);
+    setConnecting(false);
+  }, []);
 
-  // Determine active wallet
-  const solanaConnected = solanaWallet.connected && !!solanaWallet.publicKey;
+  const disconnect = useCallback(async () => {
+    setEvmAddress('');
+    setEvmBalance('0');
+    localStorage.removeItem('lore_evm_wallet');
+  }, []);
+
   const evmConnected = !!evmAddress;
-
-  if (solanaConnected) {
-    return {
-      connected: true,
-      address: solanaWallet.publicKey!.toString(),
-      balance: solanaBalance,
-      chain: 'solana',
-      walletName: solanaWallet.wallet?.adapter.name || 'Solana',
-      connectSolana,
-      connectEvm,
-      disconnect,
-      connecting,
-    };
-  }
 
   if (evmConnected) {
     return {
       connected: true,
       address: evmAddress,
       balance: evmBalance,
-      chain: 'ethereum',
+      chain: 'ethereum' as const,
       walletName: 'MetaMask',
       connectSolana,
       connectEvm,
