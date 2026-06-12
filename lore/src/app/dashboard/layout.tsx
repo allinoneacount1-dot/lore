@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  BarChart3, Bell, Globe, LayoutDashboard, Menu, Radio,
-  Search, Settings, Shield, TrendingUp, Wallet, X,
+  Bell, LayoutDashboard, Menu, Radio, Search,
+  Settings, Shield, TrendingUp, Wallet, X,
   FileText, Smile, Briefcase
 } from 'lucide-react';
 import { useWallet, WalletModal, WalletButton } from '@/components/WalletConnect';
+import { useToast } from '@/components/Toast';
 
 const sidebarLinks = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
@@ -23,6 +24,7 @@ const sidebarLinks = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { showToast } = useToast();
   const { wallet, showModal, setShowModal, connect, disconnect, connecting, copied, copyAddress } = useWallet();
 
   return (
@@ -156,11 +158,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="live-dot" />
               <span className="font-data text-xs text-[#00E676]">LIVE</span>
             </div>
-            <button className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
+            <button onClick={() => showToast('Notifications: 3 unread alerts', 'info')} className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
               <Bell size={18} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#FF5252]" />
             </button>
-            <button className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
+            <button onClick={() => showToast('Settings panel coming soon', 'info')} className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-[#A0A0B8] hover:text-white">
               <Settings size={18} />
             </button>
           </div>

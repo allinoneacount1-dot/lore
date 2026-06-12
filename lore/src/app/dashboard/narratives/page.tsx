@@ -324,7 +324,7 @@ export default function NarrativesPage() {
                         </div>
                       </div>
                       <div className="flex gap-3">
-                        <button className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
+                        <button onClick={() => showToast('Opening full analysis...', 'info')} className="btn-primary text-sm !px-4 !py-2 !rounded-lg">
                           View Full Analysis
                         </button>
                         <button

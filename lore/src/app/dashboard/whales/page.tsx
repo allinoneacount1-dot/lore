@@ -7,6 +7,7 @@ import {
   TrendingUp, TrendingDown, Clock, Star, Plus, Eye,
   ChevronDown, ChevronRight, Activity, Wallet
 } from 'lucide-react';
+import { useToast } from '@/components/Toast';
 
 const whaleData = [
   {
@@ -69,6 +70,7 @@ const recentMovements = [
 ];
 
 export default function WhaleRadarPage() {
+  const { showToast } = useToast();
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('value');
 
@@ -217,7 +219,7 @@ export default function WhaleRadarPage() {
           </div>
 
           {/* Add Wallet */}
-          <button className="w-full mt-4 py-3 rounded-xl border border-dashed border-white/10 text-sm text-[#5A5A72] hover:text-white hover:border-[#6C5CE7]/30 transition-all flex items-center justify-center gap-2">
+          <button onClick={() => showToast('Track wallet modal coming soon', 'info')} className="w-full mt-4 py-3 rounded-xl border border-dashed border-white/10 text-sm text-[#5A5A72] hover:text-white hover:border-[#6C5CE7]/30 transition-all flex items-center justify-center gap-2">
             <Plus size={16} />
             Track New Wallet
           </button>

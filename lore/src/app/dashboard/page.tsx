@@ -7,6 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, Clock, ExternalLink,
   AlertTriangle, CheckCircle, XCircle, Info
 } from 'lucide-react';
+import { useToast } from '@/components/Toast';
 
 // Mock data
 const marketStats = [
@@ -102,6 +103,7 @@ const item = {
 };
 
 export default function OverviewPage() {
+  const { showToast } = useToast();
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
@@ -214,7 +216,7 @@ export default function OverviewPage() {
               <Eye size={18} className="text-[#00D2FF]" />
               Top Wallets
             </h2>
-            <button className="text-xs text-[#6C5CE7] hover:underline">View all</button>
+            <button onClick={() => showToast('Opening Whale Radar...', 'info')} className="text-xs text-[#6C5CE7] hover:underline">View all</button>
           </div>
 
           <div className="space-y-3">
@@ -248,7 +250,7 @@ export default function OverviewPage() {
             <Activity size={18} className="text-[#FDCB6E]" />
             AI-Generated Narratives
           </h2>
-          <button className="text-xs text-[#6C5CE7] hover:underline">View all narratives</button>
+          <button onClick={() => showToast('Opening Narratives page...', 'info')} className="text-xs text-[#6C5CE7] hover:underline">View all narratives</button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
