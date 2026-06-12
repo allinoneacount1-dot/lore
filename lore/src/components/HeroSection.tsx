@@ -1,10 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { useWallet } from '@/components/WalletConnect';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+// Dynamic import for Three.js scene (SSR disabled)
+const HeroScene = dynamic(() => import('./HeroScene'), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 bg-[var(--color-bg-primary)]">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.15)_0%,transparent_70%)]" />
+    </div>
+  ),
+});
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -39,41 +50,13 @@ export default function HeroSection() {
     }
   };
 
-  const handleWatchDemo = () => {
-    showToast('Demo video coming soon! Follow @vaultmarco for updates.', 'info');
-  };
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070708] via-[#0D0D2B] to-[#1A0A2E]" />
-      <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.12)_0%,transparent_70%)]" />
-        <div className="absolute top-1/3 left-1/3 w-[400px] h-[400px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(0,210,255,0.08)_0%,transparent_70%)]" />
-      </div>
+      {/* 3D Three.js Scene */}
+      <HeroScene />
 
-      {/* Floating particles (simple div-based) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-[var(--color-primary)]/20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+      {/* Gradient overlays for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-bg-primary)]/60 via-transparent to-[var(--color-bg-primary)] pointer-events-none z-[1]" />
 
       {/* Content */}
       <motion.div
@@ -95,8 +78,8 @@ export default function HeroSection() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div variants={item} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onClick={handleEnterLore} className="btn-primary text-base flex items-center gap-2 w-full sm:w-auto justify-center">
+        <motion.div variants={item} className="mt-10 flex items-center justify-center">
+          <button onClick={handleEnterLore} className="btn-primary text-base flex items-center gap-2">
             Enter the Lore
             <ArrowRight size={18} />
           </button>
