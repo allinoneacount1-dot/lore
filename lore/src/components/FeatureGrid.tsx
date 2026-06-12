@@ -3,8 +3,7 @@
 import { motion } from 'framer-motion';
 import {
   Satellite, Brain, FileText, Shield, Eye, PieChart,
-  Bell, TrendingUp, Zap, Lock, Database, Globe,
-  ChevronRight, Star, Users, Activity, ArrowRight, Check
+  Bell, TrendingUp, ChevronRight,
 } from 'lucide-react';
 
 const features = [
@@ -27,7 +26,7 @@ const features = [
   {
     icon: Eye,
     title: 'Whale Radar',
-    description: 'Track 12,847 smart money wallets in real-time. Know what they\'re buying before the market moves.',
+    description: "Track 12,847 smart money wallets in real-time. Know what they're buying before the market moves.",
     stat: '12,847 wallets tracked',
     span: 'col-span-1 md:col-span-5',
     accent: 'cyan',
@@ -70,7 +69,10 @@ const accentColors: Record<string, string> = {
 export default function FeatureGrid() {
   return (
     <section id="intelligence" className="py-24 md:py-32 relative">
-      <div className="max-w-[1280px] mx-auto px-5 lg:px-20">
+      {/* Frosted glass backdrop so 3D particles show through */}
+      <div className="absolute inset-0 bg-[#070708]/40 backdrop-blur-[2px]" />
+
+      <div className="relative max-w-[1280px] mx-auto px-5 lg:px-20">
         {/* Section Label */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -103,7 +105,7 @@ export default function FeatureGrid() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
-                className={`${feature.span} group relative overflow-hidden rounded-2xl border ${colors.split(' ')[1]} bg-gradient-to-br ${colors.split(' ')[0]} p-6 md:p-8 hover:border-opacity-40 transition-all duration-300`}
+                className={`${feature.span} group relative overflow-hidden rounded-2xl border ${colors.split(' ')[1]} bg-gradient-to-br ${colors.split(' ')[0]} bg-[#070708]/60 backdrop-blur-sm p-6 md:p-8 hover:border-opacity-40 transition-all duration-300`}
               >
                 <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors.split(' ')[0]} mb-5`}>
                   <Icon size={24} className={colors.split(' ')[2]} />

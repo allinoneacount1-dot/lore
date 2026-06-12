@@ -41,7 +41,7 @@ const SocialIcon = ({ type }: { type: string }) => {
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-bg-primary)] border-t border-white/5 py-16">
+    <footer className="bg-[#070708]/80 backdrop-blur-sm border-t border-white/5 py-16">
       <div className="max-w-[1280px] mx-auto px-5 lg:px-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand */}

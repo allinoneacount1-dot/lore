@@ -6,10 +6,10 @@ import { ArrowRight } from 'lucide-react';
 export default function CTASection() {
   return (
     <section className="py-32 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070708] via-[#0D0D2B] to-[#1A0A2E]" />
+      {/* Transparent gradient — 3D shows through */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#070708]/50 via-[#0D0D2B]/40 to-[#1A0A2E]/50" />
       <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.15)_0%,transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.12)_0%,transparent_70%)]" />
       </div>
 
       <motion.div

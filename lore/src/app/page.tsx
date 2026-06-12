@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import FullPageScene from '@/components/FullPageScene';
 import HeroSection from '@/components/HeroSection';
 import LiveTicker from '@/components/LiveTicker';
 import FeatureGrid from '@/components/FeatureGrid';
@@ -9,15 +10,21 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#070708] text-[#F5F5FA] overflow-x-hidden">
-      <Navbar />
-      <HeroSection />
-      <LiveTicker />
-      <FeatureGrid />
-      <HowItWorks />
-      <TerminalPreview />
-      <CTASection />
-      <Footer />
+    <main className="relative min-h-screen text-[#F5F5FA] overflow-x-hidden">
+      {/* ── Full-page 3D background (fixed, behind everything) ── */}
+      <FullPageScene />
+
+      {/* ── All page content sits above the 3D canvas ── */}
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <LiveTicker />
+        <FeatureGrid />
+        <HowItWorks />
+        <TerminalPreview />
+        <CTASection />
+        <Footer />
+      </div>
     </main>
   );
 }

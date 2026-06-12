@@ -25,7 +25,6 @@ const steps = [
 
 function StepIcon({ type, className }: { type: string; className?: string }) {
   if (type === 'ingest') {
-    // Satellite dish / data collection icon
     return (
       <svg viewBox="0 0 48 48" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M24 32a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -42,7 +41,6 @@ function StepIcon({ type, className }: { type: string; className?: string }) {
     );
   }
   if (type === 'interpret') {
-    // Brain / neural network icon
     return (
       <svg viewBox="0 0 48 48" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="24" cy="20" r="8" stroke="currentColor" strokeWidth="2"/>
@@ -64,7 +62,6 @@ function StepIcon({ type, className }: { type: string; className?: string }) {
     );
   }
   if (type === 'reveal') {
-    // Eye / insight / reveal icon
     return (
       <svg viewBox="0 0 48 48" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 24s5-12 20-12 20 12 20 12-5 12-20 12S4 24 4 24z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -81,7 +78,10 @@ function StepIcon({ type, className }: { type: string; className?: string }) {
 export default function HowItWorks() {
   return (
     <section id="narrative" className="py-24 md:py-32 relative">
-      <div className="max-w-[1280px] mx-auto px-5 lg:px-20">
+      {/* Subtle frosted layer */}
+      <div className="absolute inset-0 bg-[#070708]/30" />
+
+      <div className="relative max-w-[1280px] mx-auto px-5 lg:px-20">
         {/* Section Label */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -120,7 +120,7 @@ export default function HowItWorks() {
               </div>
 
               {/* Icon */}
-              <div className="relative z-10 inline-flex p-5 rounded-2xl bg-gradient-to-br from-[var(--color-primary)]/20 to-[var(--color-secondary)]/10 border border-[var(--color-primary)]/20 mb-6">
+              <div className="relative z-10 inline-flex p-5 rounded-2xl bg-[#070708]/50 backdrop-blur-sm border border-[var(--color-primary)]/20 mb-6">
                 <StepIcon type={step.icon} className="w-8 h-8 text-[var(--color-primary)]" />
               </div>
 

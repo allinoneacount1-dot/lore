@@ -5,17 +5,6 @@ import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { useWalletContext } from '@/components/WalletProvider';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
-
-// Dynamic import for Three.js scene (SSR disabled)
-const HeroScene = dynamic(() => import('./HeroScene'), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 bg-[var(--color-bg-primary)]">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(108,92,231,0.15)_0%,transparent_70%)]" />
-    </div>
-  ),
-});
 
 const stats = [
   { value: '$2.4B+', label: 'Intelligence processed' },
@@ -51,16 +40,11 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Three.js Scene — z-index 0 */}
-      <div className="absolute inset-0 z-0">
-        <HeroScene />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center">
+      {/* Soft gradient overlay — lets 3D show through but keeps text readable */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#070708]/60 via-transparent to-[#070708]/80 pointer-events-none" />
 
-      {/* Gradient overlay for depth — z-index 1, pointer-events-none so it doesn't block clicks */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[var(--color-bg-primary)]/70 via-[var(--color-bg-primary)]/20 to-[var(--color-bg-primary)] pointer-events-none" />
-
-      {/* Content — z-index 2, above everything */}
+      {/* Content */}
       <motion.div
         variants={container}
         initial="hidden"

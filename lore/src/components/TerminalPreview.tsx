@@ -57,7 +57,10 @@ export default function TerminalPreview() {
 
   return (
     <section id="terminal" className="py-24 md:py-32 relative">
-      <div className="max-w-[1280px] mx-auto px-5 lg:px-20">
+      {/* Subtle backdrop so 3D shows through edges */}
+      <div className="absolute inset-0 bg-[#070708]/20" />
+
+      <div className="relative max-w-[1280px] mx-auto px-5 lg:px-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -78,10 +81,10 @@ export default function TerminalPreview() {
           viewport={{ once: true }}
           className="max-w-4xl mx-auto"
         >
-          {/* Terminal window */}
-          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[var(--color-bg-surface)] shadow-2xl shadow-black/50">
+          {/* Terminal window — frosted glass so 3D particles visible behind */}
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#070708]/70 backdrop-blur-md shadow-2xl shadow-black/50">
             {/* Title bar */}
-            <div className="flex items-center gap-2 px-5 py-3 bg-[var(--color-bg-card)] border-b border-white/5">
+            <div className="flex items-center gap-2 px-5 py-3 bg-[#070708]/80 backdrop-blur-sm border-b border-white/5">
               <div className="w-3 h-3 rounded-full bg-[#FF5252]" />
               <div className="w-3 h-3 rounded-full bg-[#FFD93D]" />
               <div className="w-3 h-3 rounded-full bg-[#00E676]" />
